@@ -1,0 +1,78 @@
+#
+# Copyright (C) YEAR Tamil s.a.r.l.
+# This file is distributed under the same license as the PACKAGE package.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: 1.0\n"
+"Report-Msgid-Bugs-To: Tamil <contact@tamil.fr>\n"
+"POT-Creation-Date: 2011-12-24 12:01+0100\n"
+"PO-Revision-Date: 2011-04-29 19:01+0200\n"
+"Last-Translator: Frédéric Demians <f.demians@tamil.fr>\n"
+"Language-Team: Tamil <contact@tamil.fr>\n"
+"Language: ta\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: ../lib/Koha/Contrib/Tamil/Indexer.pm:99
+msgid "Exporting records to update"
+msgstr "Export des enregistrements à mettre à jour"
+
+#: ../lib/Koha/Contrib/Tamil/Indexer.pm:118
+msgid "Exporting records to delete"
+msgstr "Export des enregistrements à supprimer"
+
+#: ../lib/Koha/Contrib/Tamil/IndexerDaemon.pm:44
+msgid "Starting Koha Indexer Daemon"
+msgstr "Démarrage du daemon d'indexation Koha"
+
+#: ../lib/Koha/Contrib/Tamil/IndexerDaemon.pm:78
+#, perl-brace-format
+msgid "[{name}] Index biblio ({biblio_count}) authority ({auth_count})"
+msgstr "[{name}] Indexation notices biblio ({biblio_count}) et d'autorité ({auth_count})"
+
+#: ../lib/Koha/Contrib/Tamil/FileProcess.pm:79
+msgid "Start process...\n"
+msgstr "Démarrage du traitement\n"
+
+#: ../lib/Koha/Contrib/Tamil/FileProcess.pm:90
+#, perl-brace-format
+msgid "One record processed"
+msgid_plural "Records processed: {count}"
+msgstr[0] "Un enregistrement a été traité"
+msgstr[1] "Nombre d'enregistrements traités : {count}"
+
+#: ../lib/Koha/Contrib/Tamil/Authority/FromBiblioTask.pm:38
+#, perl-brace-format
+msgid ""
+"Create authorities from biblio records\n"
+"  source:         Koha DB\n"
+"  target:         {output}\n"
+"  temporary file: {tmp_file}\n"
+msgstr ""
+"Crée les autorités à partir des notices bibliographiques\n"
+"  source :             Koha DB\n"
+"  cible :              {output}\n"
+"  fichier temporaire : {tmp_file}\n"
+
+#: ../lib/Koha/Contrib/Tamil/Authority/LoadFileTask.pm:42
+msgid "Truncate table: auth_header\n"
+msgstr ""
+
+#: ../lib/Koha/Contrib/Tamil/Authority/LoadFileTask.pm:52
+msgid "** TEST **"
+msgstr "** TEST **"
+
+#: ../lib/Koha/Contrib/Tamil/Authority/LoadFileTask.pm:55
+#, perl-brace-format
+msgid ""
+"Load authorities into Koha from a file {test_flag}\n"
+"  source: {source_file}\n"
+"  target: Koha DB\n"
+msgstr ""
+"Chargement des autorités dans Koha à partir d'un fichier {test_flag}\n"
+"  source : {source_file}\n"
+"  crible : Koha DB\n"
+

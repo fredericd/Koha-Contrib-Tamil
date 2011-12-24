@@ -1,0 +1,14 @@
+# Makefile snippet that holds all package-dependent information.
+
+# Add more languages here!  Beware that this is a makefile snippet and
+# you have to adhere to make syntax.
+LINGUAS = fr \
+
+# Textdomain for our package.
+TEXTDOMAIN = fr.tamil.koha-tools
+
+# Initial copyright holder added to pot and po files.
+COPYRIGHT_HOLDER = Tamil s.a.r.l.
+
+# Where to send msgid bugs?  
+MSGID_BUGS_ADDRESS = Tamil <contact@tamil.fr>
