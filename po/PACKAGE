@@ -5,7 +5,7 @@
 LINGUAS = fr \
 
 # Textdomain for our package.
-TEXTDOMAIN = fr.tamil.koha-tools
+TEXTDOMAIN = Koha-Contrib-Tamil
 
 # Initial copyright holder added to pot and po files.
 COPYRIGHT_HOLDER = Tamil s.a.r.l.

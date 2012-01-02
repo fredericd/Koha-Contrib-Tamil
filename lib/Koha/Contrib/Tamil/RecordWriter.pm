@@ -1,5 +1,5 @@
 package Koha::Contrib::Tamil::RecordWriter;
-#ABSTRACT: RecordWriter - Class for writing whatever records into whatever
+#ABSTRACT: RecordWriter - Base class for writing whatever records into whatever
 
 use Moose;
 
@@ -26,4 +26,24 @@ sub write {
 __PACKAGE__->meta->make_immutable;
 
 1;
+
+__END__
+
+=pod
+
+=head1 DESCRIPTION
+
+=method begin
+
+=method end
+
+=method write
+
+=head1 SEE ALSO
+
+=for :list
+* L<Koha::Contrib::Tamil::RecordWriter>
+* L<Koha::Contrib::Tamil::RecordReader>
+
+=cut
 

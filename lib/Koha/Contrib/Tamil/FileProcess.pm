@@ -6,7 +6,7 @@ use Moose;
 use diagnostics;
 use AnyEvent;
 use Koha::Contrib::Tamil::EchoWatcher;
-use Locale::TextDomain 'fr.tamil.koha-tools';
+use Locale::TextDomain 'Koha-Contrib-Tamil';
 
 with 'Koha::Contrib::Tamil::WatchableTask';
 

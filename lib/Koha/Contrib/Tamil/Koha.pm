@@ -12,11 +12,33 @@ use MARC::File::XML;
 use YAML;
 
 
+=attr conf_file
+
+Name of Koha configuration file. If not supplied, the configuration file is
+taken in KOHA_CONF environment variable.
+
+=cut
+
 has conf_file => ( is => 'rw', isa => 'Str' );
+
+
+=attr dbh
+
+Handle to Koha database defined in Koha configuration file.
+
+=cut
 
 has dbh => ( is => 'rw' );
 
+
+=attr conf
+
+Koha XML configuration file.
+
+=cut
+
 has conf => ( is => 'rw' );
+
 
 has _zconn => ( is => 'rw', isa => 'HashRef' );
 
@@ -53,7 +75,12 @@ sub BUILD {
 }
 
 
-# Réinitialisation des deux connexions
+=method zconn_reset
+
+Reset both Zebra connections, biblio/authority server.
+
+=cut
+
 sub zconn_reset {
     my $self = shift;
     my $zcs = $self->_zconn;
@@ -64,6 +91,15 @@ sub zconn_reset {
     }
 }
 
+
+=method zconn($type)
+
+Return a connection to biblio or authority Zebra server. Example:
+
+  my $zc = $koha->zconn('biblio');
+  my $zc = $koha->zconn('authority');
+
+=cut
 
 sub zconn {
     my ($self, $server) = @_;
@@ -107,19 +143,34 @@ sub zconn {
 }
 
 
+=method zbiblio
+
+Returns a L<ZOOM::connection> to Koha bibliographic records Zebra server.
+
+=cut
+
 sub zbiblio {
     shift->zconn( 'biblio' );
 }
 
+
+=method zauth
+
+Returns a L<ZOOM::connection> to Koha authority records Zebra server.
+
+=cut
 
 sub zauth {
     shift->zconn( 'auth' );
 }
 
 
-#
-# Return a MARC::Record from its biblionumber
-#
+=method get_biblio_marc($biblionumber)
+
+Return a MARC::Record from its biblionumber
+
+=cut
+
 sub get_biblio_marc {
     my ( $self, $id ) = @_; 
     my $sth = $self->dbh->prepare(

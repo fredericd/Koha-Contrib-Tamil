@@ -9,7 +9,7 @@ use MARC::Record;
 use File::Temp qw( tempfile );
 use YAML::Syck;
 use List::Util qw( first );
-use Locale::TextDomain 'fr.tamil.koha-tools';
+use Locale::TextDomain 'Koha-Contrib-Tamil';
 
 
 extends 'Koha::Contrib::Tamil::Authority::Task';

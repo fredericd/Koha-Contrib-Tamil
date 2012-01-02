@@ -5,26 +5,42 @@ use Moose;
 
 use 5.010;
 use utf8;
-use warnings;
-use strict;
 use AnyEvent;
 use Koha::Contrib::Tamil::Koha;
 use Koha::Contrib::Tamil::Indexer;
-use Locale::TextDomain 'fr.tamil.koha-tools';
+use Locale::TextDomain ('Koha-Contrib-Tamil');
 
 with 'MooseX::Getopt';
 
 
-has id => ( is => 'rw', isa => 'Str', );
-
 has name => ( is => 'rw', isa => 'Str' );
+
+
+=attr conf($file_name)
+
+Koha configuration file name. If not supplied, KOHA_CONF environment variable
+is used to locate the configuration file.
+
+=cut
 
 has conf => ( is => 'rw', isa => 'Str' );
 
-has directory => (
-    is      => 'rw',
-    isa     => 'Str',
-);
+
+=attr directory($directory_name)
+
+Location of the directory where to export biblio/authority records before
+sending them to Zebra indexer.
+
+=cut
+
+has directory => ( is => 'rw', isa => 'Str' );
+
+
+=attr timeout($seconds)
+
+Number of seconds between indexing.
+
+=cut
 
 has timeout => (
     is      => 'rw',
@@ -32,12 +48,16 @@ has timeout => (
     default => 60,
 );
 
+
+=attr verbose(0|1)
+
+Task verbosity.
+
+=cut
+
 has verbose => ( is => 'rw', isa => 'Bool', default => 0 );
 
-has koha => (
-    is => 'rw',
-    isa => 'Koha::Contrib::Tamil::Koha',
-);
+has koha => ( is => 'rw', isa => 'Koha::Contrib::Tamil::Koha' );
 
 
 sub BUILD {
@@ -51,11 +71,9 @@ sub BUILD {
     $self->name( $self->koha->conf->{config}->{database} );
 
     my $idle = AnyEvent->timer(
-        after => $self->timeout,
+        after    => $self->timeout,
         interval => $self->timeout,
-        cb => sub {
-            $self->index_zebraqueue();
-        }
+        cb       => sub { $self->index_zebraqueue(); }
     );
     AnyEvent->condvar->recv;
 }
@@ -68,24 +86,25 @@ sub index_zebraqueue {
                 FROM zebraqueue 
                 WHERE done = 0
                 GROUP BY server ";
-    my $sth = $self->koha->dbh->prepare( $sql );
+    my $sth = $self->koha->dbh->prepare($sql);
     $sth->execute();
-    my ($biblio_count, $auth_count) = (0, 0);
+    my %count = ( biblio => 0, authority => 0 );
     while ( my ($count, $server) = $sth->fetchrow ) {
-        $biblio_count = $count  if $server =~ /biblio/;
-        $auth_count   = $count  if $server =~ /authority/;
+        $server =~ s/server//g;
+        $count{$server} = $count;
     }
 
     print __x (
         "[{name}] Index biblio ({biblio_count}) authority ({auth_count})",
         name => $self->name,
-        biblio_count => $biblio_count,
-        auth_count => $auth_count ), "\n";
+        biblio_count => $count{biblio},
+        auth_count => $count{authority} ), "\n";
 
-    if ( $biblio_count > 0 ) {
+    for my $source (qw/biblio authority/) {
+        next unless $count{$source};
         my $indexer = Koha::Contrib::Tamil::Indexer->new(
             koha        => $self->koha,
-            source      => 'biblio',
+            source      => $source,
             select      => 'queue',
             blocking    => 1,
             verbose     => $self->verbose,
@@ -93,18 +112,29 @@ sub index_zebraqueue {
         $indexer->directory($self->directory) if $self->directory;
         $indexer->run();
     }
-    if ( $auth_count > 0 ) {
-        my $indexer = Koha::Contrib::Tamil::Indexer->new(
-            koha        => $self->koha,
-            source      => 'authority',
-            select      => 'queue',
-            blocking    => 1,
-            verbose     => $self->verbose,
-        );
-        $indexer->directory($self->directory) if $self->directory;
-        $indexer->run();
-     }
 }
 
+no Moose;
+__PACKAGE__->meta->make_immutable;
 1;
+
+__END__
+=pod 
+
+=head1 SYNOPSIS
+
+ # Index Koha queued biblio/authority records every minute.
+ # KOHA_CONF environment variable is used to find which Koha
+ # instance to use.
+ # Records are exported from Koha DB into files located in
+ # the current directory
+ my $daemon = Koha::Contrib::Tamil::IndexerDaemon->new();
+
+ my $daemon = Koha::Contrib::Tamil::IndexerDaemon->new(
+    timeout   => 20,
+    conf      => '/home/koha/mylib/etc/koha-conf.xml',
+    directory => '/home/koha/mylib/tmp',
+    verbose   => 1 );
+
+=cut
 

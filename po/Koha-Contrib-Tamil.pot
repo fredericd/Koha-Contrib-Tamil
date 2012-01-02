@@ -8,29 +8,28 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: Tamil <contact@tamil.fr>\n"
-"POT-Creation-Date: 2011-12-24 12:01+0100\n"
+"POT-Creation-Date: 2011-12-30 17:36+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
-"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
 
-#: ../lib/Koha/Contrib/Tamil/Indexer.pm:99
+#: ../lib/Koha/Contrib/Tamil/Indexer.pm:98
 msgid "Exporting records to update"
 msgstr ""
 
-#: ../lib/Koha/Contrib/Tamil/Indexer.pm:118
+#: ../lib/Koha/Contrib/Tamil/Indexer.pm:117
 msgid "Exporting records to delete"
 msgstr ""
 
-#: ../lib/Koha/Contrib/Tamil/IndexerDaemon.pm:44
+#: ../lib/Koha/Contrib/Tamil/IndexerDaemon.pm:66
 msgid "Starting Koha Indexer Daemon"
 msgstr ""
 
-#: ../lib/Koha/Contrib/Tamil/IndexerDaemon.pm:78
+#: ../lib/Koha/Contrib/Tamil/IndexerDaemon.pm:98
 #, perl-brace-format
 msgid "[{name}] Index biblio ({biblio_count}) authority ({auth_count})"
 msgstr ""
@@ -46,7 +45,7 @@ msgid_plural "Records processed: {count}"
 msgstr[0] ""
 msgstr[1] ""
 
-#: ../lib/Koha/Contrib/Tamil/Authority/FromBiblioTask.pm:38
+#: ../lib/Koha/Contrib/Tamil/Authority/FromBiblioTask.pm:40
 #, perl-brace-format
 msgid ""
 "Create authorities from biblio records\n"
@@ -55,15 +54,15 @@ msgid ""
 "  temporary file: {tmp_file}\n"
 msgstr ""
 
-#: ../lib/Koha/Contrib/Tamil/Authority/LoadFileTask.pm:42
+#: ../lib/Koha/Contrib/Tamil/Authority/LoadFileTask.pm:43
 msgid "Truncate table: auth_header\n"
 msgstr ""
 
-#: ../lib/Koha/Contrib/Tamil/Authority/LoadFileTask.pm:52
+#: ../lib/Koha/Contrib/Tamil/Authority/LoadFileTask.pm:53
 msgid "** TEST **"
 msgstr ""
 
-#: ../lib/Koha/Contrib/Tamil/Authority/LoadFileTask.pm:55
+#: ../lib/Koha/Contrib/Tamil/Authority/LoadFileTask.pm:56
 #, perl-brace-format
 msgid ""
 "Load authorities into Koha from a file {test_flag}\n"

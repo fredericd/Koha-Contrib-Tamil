@@ -9,9 +9,6 @@ __END__
 
 =pod
 
-=head1 DESCRIPTION
-
-
 =head1 SEE ALSO
 
 =for :list

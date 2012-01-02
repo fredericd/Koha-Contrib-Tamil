@@ -128,8 +128,8 @@ sub get_biblio_xml {
     $sth->execute( $id );
     my ($marcxml) = $sth->fetchrow;
 
-    # If biblio isn't found in biblioitems, it is search in deletedbilioitems
-    # Usefull for delete Zebra requests
+    # If biblio isn't found in biblioitems, it is searched in
+    # deletedbilioitems. Usefull for delete Zebra requests
     unless ( $marcxml ) {
         $sth = $self->koha->dbh->prepare(
             "SELECT marcxml FROM deletedbiblioitems WHERE biblionumber=? ");
@@ -232,7 +232,8 @@ __PACKAGE__->meta->make_immutable;
   my $reader = Koha::Contrib::Tamil::RecordReader->new(
     koha => k$, source => 'biblio', select => 'queue' );
 
-  my $k = Koha->new( '/usr/local/koha-world/etc/koha-conf.xml' );
+  my $k = Koha::Contrib::Tamil::Koha->new(
+    '/usr/local/koha-world/etc/koha-conf.xml' );
   # Return XML records.
   my $reader = Koha::Contrib::Tamil::RecordReader->new(
     koha => k$, source => authority, select => 'queue', xml => 1 );

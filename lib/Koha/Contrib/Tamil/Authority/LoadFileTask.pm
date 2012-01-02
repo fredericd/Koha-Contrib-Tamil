@@ -5,7 +5,7 @@ use Moose;
 
 extends 'Koha::Contrib::Tamil::Authority::Task', 'Koha::Contrib::Tamil::LogProcess';
  
-use Locale::TextDomain 'fr.tamil.koha-tools';
+use Locale::TextDomain 'Koha-Contrib-Tamil';
 
 
 

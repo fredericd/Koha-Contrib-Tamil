@@ -3,17 +3,13 @@ package Koha::Contrib::Tamil::Indexer;
 
 use Moose;
 
-use FindBin qw( $Bin );
-use lib "$Bin/../lib";
-
 use Carp;
 use Koha::Contrib::Tamil::Koha;
 use Koha::Contrib::Tamil::RecordReader;
 use Koha::Contrib::Tamil::RecordWriter::File::Marcxml;
 use Koha::Contrib::Tamil::Conversion;
 use File::Path;
-use YAML;
-use Locale::TextDomain 'fr.tamil.koha-tools';
+use Locale::TextDomain 'Koha-Contrib-Tamil';
 
 
 with 'MooseX::Getopt';
@@ -54,11 +50,7 @@ has directory => (
     default => './koha-index',
 );
 
-has verbose => (
-    is      => 'rw',
-    isa     => 'Bool',
-    default => 0,
-);
+has verbose => ( is => 'rw', isa => 'Bool', default => 0 );
 
 has help => (
     is      => 'rw',
@@ -73,6 +65,13 @@ has blocking => (
     default => 0,
     traits  => [ 'NoGetopt' ],
 );
+
+
+=method run
+
+Runs the indexing task.
+
+=cut
 
 sub run {
     my $self = shift;
@@ -109,7 +108,7 @@ sub run {
             binmode => 'utf8'
         ),
         blocking    => $self->blocking,
-        verbose     => $is_full_indexing ? $self->verbose : 0,
+        verbose     => $self->verbose,
     );
     $exporter->run();
 
@@ -128,6 +127,7 @@ sub run {
                 binmode => 'utf8'
             ),
             blocking    => $self->blocking,
+            verbose     => $self->verbose,
         );
         $exporter->run();
     }
@@ -168,11 +168,36 @@ sub run {
         $sth->execute( 
             $self->source =~ /biblio/ ? 'biblioserver' : 'authorityserver' );
     }
-
 }
+
 
 no Moose;
 __PACKAGE__->meta->make_immutable;
+
+__END__
+=pod
+
+=HEAD1 SYNOPSIS
+
+ my $indexer = Koha::Contrib::Tamil::Indexer->new(
+   source => 'biblio',
+   select => 'queue'
+ );
+ $indexer->run();
+
+ my $indexer = Koha::Contrib::Tamil::Indexer->new(
+   source    => 'authority',
+   select    => 'all',
+   directory => '/tmp',
+   verbose   => 1,
+ );
+ $indexer->run();
+
+=HEAD1 DESCRIPTION
+
+Indexes Koha biblio/authority records, full indexing or queued record indexing.
+
+=cut
 
 1;
 

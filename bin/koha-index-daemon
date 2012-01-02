@@ -43,7 +43,7 @@ Specify the daemon timeout in seconds.
 
 =item --conf
 
-Specify Koha configuration file. Without this parameter the file specify by
+Specify Koha configuration file. Without this parameter the file specified by
 KOHA_CONF environment variable is used.
 
 =item --directory
