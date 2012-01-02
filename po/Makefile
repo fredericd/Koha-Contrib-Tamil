@@ -60,7 +60,7 @@ $(TD).pot: $(POTFILES)
 
 install: $(MO_FILES)
 	cd $(srcdir); \
-	targetdir='../share/LocaleData'; \
+	targetdir='../lib/LocaleData'; \
 	languages='$(LINGUAS)'; \
 	for lang in $$languages; do \
 		mkdir -p "$$targetdir/$$lang/LC_MESSAGES" || exit 1; \
