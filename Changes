@@ -8,3 +8,7 @@ Revision history for Perl module Koha::Contrib::Tamil
 
  - Doc
  - Multi-lingual, French, German
+
+0.008 2012-01-07
+
+ - Bug in koha-auth
