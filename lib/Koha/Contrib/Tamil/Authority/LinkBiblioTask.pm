@@ -28,6 +28,7 @@ sub run {
     $self->reader(
         Koha::Contrib::Tamil::RecordReader->new( koha => $self->koha ) )
             unless $self->reader;
+    $self->koha->dbh->{AutoCommit} = 0;
     $self->SUPER::run();
 }
 
@@ -42,15 +43,19 @@ sub process {
     $self->SUPER::process();
 
     # FIXME Reset de la connexion tous les 100 enregistrements
-    $self->koha->zconn_reset()  unless $self->reader->count % 100;
+    unless ( $self->reader->count % 100 ) {
+        $self->koha->zconn_reset();
+        $self->koha->dbh->commit();
+    }
     my $zconn = $self->koha->zauth();
+    my $modified = 0;
     foreach my $authority ( @{ $self->conf_authorities } ) { # loop on all authority types
         foreach my $tag ( @{ $authority->{bibliotags} } ) { 
             # loop on all biblio tags related to the current authority
             FIELD:
             foreach my $field ( $record->field( $tag ) ) {
                 # All field repetitions
-                my $concat = '';
+                my @concats = '@attr 1=authtype ' . $authority->{authcode};
                 SUBFIELD:
                 foreach my $subfield ( $field->subfields() ) {
                     my ($letter, $value) = @$subfield;
@@ -62,36 +67,38 @@ sub process {
                     $value =~ s/\s+$//;
                     $value = ucfirst $value;
                     next SUBFIELD if !$value;
-                    if ( $authority->{authletters} =~ /$letter/ ) {
-                        $concat = '@and ' . $concat if $concat;
-                        $concat .= ' @attr 1=Heading @attr 6=3 "' .$value .'"';   
-                    }
+                    push @concats, '@attr 1=Heading @attr 4=1 @attr 6=3 "' .$value .'"'
+                        if $authority->{authletters} =~ /$letter/;
                 }
-                next FIELD if !$concat;
-                my $query 
-                    = '@and @attr 1=authtype ' 
-                      . $authority->{ authcode } . ' ' . $concat;
+                next FIELD if @concats == 1;
+                my $query = '@and ' x $#concats . join(' ', @concats);
                 #print "$query\n";
                 eval {
                     my $rs = $zconn->search_pqf( $query );
                     #print "result set size: ", $rs->size(), "\n";
+                    # FIXME: If there are more than two authorities, the biblio
+                    # record is linked to the first one
+                    if ( $rs->size() > 1 ) {
+                        print STDERR "WARNING: " . $rs->size() . " matching authorities for $query\n";
+                    }
                     if ( $rs->size() >= 1 ) {
                         my $auth = $rs->record(0);
                         my $m = new_from_usmarc MARC::Record( $auth->raw() );
                         my $id = $m->field('001')->data();
                         #print "ID: $id\n";
                         my @ns = ();
-                        push( @ns, '9', $id );
+                        push @ns, '9', $id;
                         for ( $field->subfields() ) {
                             my ($letter, $value) = @$_;
-                            push( @ns, $letter, $value ) if $letter ne '9';
+                            push @ns, $letter, $value  if $letter ne '9';
                         }
                         $field->replace_with( new MARC::Field(
                             $field->tag, $field->indicator(1), $field->indicator(2),
                             @ns ) );
+                        $modified = 1;
                     }
                     else {
-                        print STDERR "ERROR: authority not found -- $query\n";
+                        print STDERR "WARNING: authority not found -- $query\n";
                     }
                     $rs->destroy();
                 };
@@ -99,7 +106,7 @@ sub process {
             }
         }
     }
-    ModBiblio( $record, $self->reader->id );
+    ModBiblio( $record, $self->reader->id ) if $modified;
 
     return 1;
 }
