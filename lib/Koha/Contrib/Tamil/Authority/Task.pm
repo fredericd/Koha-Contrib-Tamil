@@ -4,6 +4,8 @@ use Moose;
 
 extends 'Koha::Contrib::Tamil::FileProcess';
 
+use 5.010;
+use utf8;
 use Carp;
 use YAML::Syck;
 

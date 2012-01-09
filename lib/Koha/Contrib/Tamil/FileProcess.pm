@@ -3,6 +3,8 @@ package Koha::Contrib::Tamil::FileProcess;
 
 use Moose;
 
+use 5.010;
+use utf8;
 use diagnostics;
 use AnyEvent;
 use Koha::Contrib::Tamil::EchoWatcher;

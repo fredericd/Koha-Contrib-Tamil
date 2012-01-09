@@ -12,8 +12,6 @@ use Koha::Contrib::Tamil::RecordReader;
 use C4::Context;
 use C4::Biblio;
 
-binmode( STDERR, ":utf8");
-
 has reader => ( is => 'rw', isa => 'Koha::Contrib::Tamil::RecordReader' );
 
 has koha => (
@@ -21,6 +19,22 @@ has koha => (
     default => sub { Koha::Contrib::Tamil::Koha->new() }
 );
 
+=method cached(0|1)
+
+Do we cache matching authority headings found in biblio records. It improves
+speed at the price of memory.
+
+=cut
+has cached => ( is => 'rw', isa => 'Bool', default => 1 );
+
+=method doit(0|1)
+
+Do modification in Koha biblio records?
+
+=cut
+has doit => ( is => 'rw', isa => 'Bool', default => 0 );
+
+has _heading => ( is => 'rw', isa => 'HashRef', default => sub { {} } );
 
 
 sub run {
@@ -49,13 +63,16 @@ sub process {
     }
     my $zconn = $self->koha->zauth();
     my $modified = 0;
+    my $biblionumber = $self->reader->id;
+    my $cached = $self->cached;
+    my $_heading = $self->_heading;
     foreach my $authority ( @{ $self->conf_authorities } ) { # loop on all authority types
         foreach my $tag ( @{ $authority->{bibliotags} } ) { 
             # loop on all biblio tags related to the current authority
             FIELD:
             foreach my $field ( $record->field( $tag ) ) {
                 # All field repetitions
-                my @concats = '@attr 1=authtype ' . $authority->{authcode};
+                my @values;
                 SUBFIELD:
                 foreach my $subfield ( $field->subfields() ) {
                     my ($letter, $value) = @$subfield;
@@ -67,46 +84,64 @@ sub process {
                     $value =~ s/\s+$//;
                     $value = ucfirst $value;
                     next SUBFIELD if !$value;
-                    push @concats, '@attr 1=Heading @attr 4=1 @attr 6=3 "' .$value .'"'
+                    push @values, $value
                         if $authority->{authletters} =~ /$letter/;
                 }
-                next FIELD if @concats == 1;
-                my $query = '@and ' x $#concats . join(' ', @concats);
-                #print "$query\n";
-                eval {
-                    my $rs = $zconn->search_pqf( $query );
-                    #print "result set size: ", $rs->size(), "\n";
-                    # FIXME: If there are more than two authorities, the biblio
-                    # record is linked to the first one
-                    if ( $rs->size() > 1 ) {
-                        print STDERR "WARNING: " . $rs->size() . " matching authorities for $query\n";
-                    }
-                    if ( $rs->size() >= 1 ) {
-                        my $auth = $rs->record(0);
-                        my $m = new_from_usmarc MARC::Record( $auth->raw() );
-                        my $id = $m->field('001')->data();
-                        #print "ID: $id\n";
-                        my @ns = ();
-                        push @ns, '9', $id;
-                        for ( $field->subfields() ) {
-                            my ($letter, $value) = @$_;
-                            push @ns, $letter, $value  if $letter ne '9';
+                next FIELD unless @values;
+                my $heading = join(' ', @values);
+                my $id = $_heading->{$heading};
+                if ( defined($id) && $id == -1 ) {
+                    #print "FOUND IN CACHE AND NOT IN ZEBRA: $heading\n";
+                    next;
+                }
+                unless ( $id ) {
+                    # 6=3 Exact matching
+                    my $query = '@and @attr 1=authtype ' . $authority->{authcode} .
+                                ' @attr 1=Heading @attr 4=1 @attr 6=3 "' . $heading . '"';
+                    #print "$query\n";
+                    eval {
+                        my $rs = $zconn->search_pqf( $query );
+                        # FIXME: If there are more than two authorities, the biblio
+                        # record is linked to the first one
+                        if ( (my $size = $rs->size()) >= 1 ) {
+                            print STDERR "[$biblionumber] WARNING: " . $rs->size() . " matching authorities for $heading\n"
+                                if $size > 1;
+                            my $auth = $rs->record(0);
+                            my $m = new_from_usmarc MARC::Record( $auth->raw() );
+                            $id = $m->field('001')->data();
                         }
-                        $field->replace_with( new MARC::Field(
-                            $field->tag, $field->indicator(1), $field->indicator(2),
-                            @ns ) );
-                        $modified = 1;
+                        else {
+                            print STDERR "[$biblionumber] WARNING: authority not found -- $heading\n";
+                        }
+                        $rs->destroy();
+                    };
+                    print STDERR "ERROR: ZOOM ", $@, "\n" if $@;
+                }
+                else {
+                    #print "FOUND IN CACHE: $heading\n";
+                }
+                #print "ID: $id\n";
+                if ( defined $id ) {
+                    $_heading->{$heading} = $id if $cached;
+                    my @ns = ();
+                    push @ns, '9', $id;
+                    for ( $field->subfields() ) {
+                        my ($letter, $value) = @$_;
+                        push @ns, $letter, $value  if $letter ne '9';
                     }
-                    else {
-                        print STDERR "WARNING: authority not found -- $query\n";
-                    }
-                    $rs->destroy();
-                };
-                print STDERR "ERROR: ZOOM ", $@, "\n" if $@;
+                    $field->replace_with( new MARC::Field(
+                        $field->tag, $field->indicator(1), $field->indicator(2),
+                        @ns ) );
+                    $modified = 1;
+                }
+                else {
+                    $_heading->{$heading} = -1 if $cached;
+                }
             }
         }
     }
-    ModBiblio( $record, $self->reader->id ) if $modified;
+    return 1 if !$self->doit || !$modified;
+    ModBiblio( $record, $self->reader->id );
 
     return 1;
 }

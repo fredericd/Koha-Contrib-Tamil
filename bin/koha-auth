@@ -18,7 +18,8 @@ use Koha::Contrib::Tamil::Authority::LoadFileTask;
 use Koha::Contrib::Tamil::Authority::LinkBiblioTask;
 
 
-#binmode( STDOUT, ":utf8" );
+binmode( STDOUT, ":utf8" );
+binmode( STDERR, ":utf8" );
 
 my $verbose     = 0;
 my $help        = 0;
@@ -64,6 +65,7 @@ elsif ( $command eq 'link_biblio_to' ) {
     my $task = Koha::Contrib::Tamil::Authority::LinkBiblioTask->new(
         conf_file => $conf_file,
         verbose   => 1,
+        doit      => $doit,
     );
     $task->run();
 }
@@ -91,21 +93,23 @@ records, load them into the authorities table, and link authorities to biblios.
 Creates a text file F<authorities.txt> containing authorities extracted
 from Koha biblio records using F<auth.conf> authorities configuration.
 
-=item koha-auth [--truncate] load_from_file F<auth.conf> 
+=item koha-auth [--truncate] [--doit] load_from_file F<auth.conf> 
 F<authorities.txt>
 
 Load authorities from F<authorities.txt> into Koha using F<auth.conf>
 authorities configuration. With --truncate, auth_head Koha table is
 truncated before loading new authorities. After this processing,
-authorities have to be indexed with Zebra in order to be
-searchable.
+authorities have to be indexed with Zebra in order to be searchable. Without
+--doit, the file processing is done but authorities are not effectively loaded
+into Koha DB.
 
-=item koha-auth link_biblio_to F<auth.conf>
+=item koha-auth link_biblio_to [--doit] F<auth.conf>
 
-Link biblio records fields with authorities via $9 subfield. 
-Authorities must have been indexed with Zebra. 
-After this processing, it is necessary to
-index bibliographic records with Zebra.
+Link biblio records fields with authorities via $9 subfield.  Authorities must
+have been indexed with Zebra.  After this processing, it is necessary to index
+bibliographic records with Zebra. Without --doit, the processing is done, but
+biblio records are not modified. This way you can check that authority heading
+matching works properly.
 
 =back
      
