@@ -21,11 +21,22 @@ sub write {
     my ( $self, $record ) = @_;
 
     $self->SUPER::write();
-
     my $fh = $self->fh;
-    print $fh $record->as_usmarc(); 
+
+    if ( ref($record) eq 'MARC::Record' ) {
+        print $fh $record->as_usmarc(); 
+    }
+    else {
+        my $rec = MARC::Record::new_from_xml( $record, "utf8" );
+        my $leader = $rec->leader;
+        if ( length($leader) > 24 ) {
+            $rec->leader( substr($leader, 0, 24) );
+        }
+        print $fh $rec->as_usmarc;
+    }
 }
 
 __PACKAGE__->meta->make_immutable;
 
-1
+1;
+
