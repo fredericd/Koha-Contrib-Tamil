@@ -12,3 +12,10 @@ Revision history for Perl module Koha::Contrib::Tamil
 0.008 2012-01-07
 
  - Bug in koha-auth
+
+0.009 2012-01-09
+
+ - koha-auth uses heading exact matching
+ - Authorities indexer uses ISO2709 rather than MARCXML, required for
+   Zebra DOM filter
+
