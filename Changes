@@ -1,21 +1,26 @@
 Revision history for Perl module Koha::Contrib::Tamil
 
-0.006 2012-01-02
+0.010 2012-01-12
 
- - Initial release
-
-0.007 2012-01-07
-
- - Doc
- - Multi-lingual, French, German
-
-0.008 2012-01-07
-
- - Bug in koha-auth
+  - Authorities indexing works both for Koha instance using DOM filter and
+    GRS-1 filter.
 
 0.009 2012-01-09
 
  - koha-auth uses heading exact matching
  - Authorities indexer uses ISO2709 rather than MARCXML, required for
    Zebra DOM filter
+
+0.008 2012-01-07
+
+ - Bug in koha-auth
+
+0.007 2012-01-07
+
+ - Doc
+ - Multi-lingual, French, German
+
+0.006 2012-01-02
+
+ - Initial release
 
