@@ -87,8 +87,7 @@ sub process {
                 $authority->{authtag}, '', '', @subfields);
             $record->append_fields($field);
             $self->log->info( "$authcode: " . $field->as_formatted() . "\n" );
-            my ($authid) = AddAuthority($record, 0, $authcode)
-                if ($self->doit);
+            AddAuthority($record, 0, $authcode) if $self->doit;
     	}
         return 1;
     }

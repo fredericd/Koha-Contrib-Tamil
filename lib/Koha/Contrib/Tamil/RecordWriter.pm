@@ -3,7 +3,6 @@ package Koha::Contrib::Tamil::RecordWriter;
 
 use Moose;
 
-
 has count => (
     is => 'rw',
     isa => 'Int',

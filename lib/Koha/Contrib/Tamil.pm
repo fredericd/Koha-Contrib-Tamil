@@ -1,6 +1,9 @@
 package Koha::Contrib::Tamil;
 # ABSTRACT: Various scripts to manage Koha instances
 
+use warnings;
+use strict;
+
 1;
 
 __END__

@@ -186,7 +186,7 @@ sub get_biblio_marc {
         if ($@) { warn " problem with: $id : $@ \n$marcxml"; }
         return $record;
     }
-    return undef;
+    return;
 }
 
 

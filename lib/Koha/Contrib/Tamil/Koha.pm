@@ -177,7 +177,7 @@ sub get_biblio_marc {
         "SELECT marcxml FROM biblioitems WHERE biblionumber=? ");
     $sth->execute( $id );
     my ($marcxml) = $sth->fetchrow;
-    return undef unless $marcxml;
+    return unless $marcxml;
     $marcxml =~
 s/[^\x09\x0A\x0D\x{0020}-\x{D7FF}\x{E000}-\x{FFFD}\x{10000}-\x{10FFFF}]//g;
     #MARC::File::XML->default_record_format(
@@ -189,7 +189,7 @@ s/[^\x09\x0A\x0D\x{0020}-\x{D7FF}\x{E000}-\x{FFFD}\x{10000}-\x{10FFFF}]//g;
         if ($@) { warn " problem with: $id : $@ \n$marcxml"; }
         return $record;
     }   
-    return undef;
+    return;
 }
 
 
