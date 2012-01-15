@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.0\n"
 "Report-Msgid-Bugs-To: Tamil <contact@tamil.fr>\n"
-"POT-Creation-Date: 2012-01-03 12:55+0100\n"
+"POT-Creation-Date: 2012-01-14 10:29+0100\n"
 "PO-Revision-Date: 2011-04-29 19:01+0200\n"
 "Last-Translator: Frédéric Demians <f.demians@tamil.fr>\n"
 "Language-Team: Tamil <contact@tamil.fr>\n"
@@ -16,11 +16,11 @@ msgstr ""
 "Language: ta\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: ../lib/Koha/Contrib/Tamil/Indexer.pm:98
+#: ../lib/Koha/Contrib/Tamil/Indexer.pm:99
 msgid "Exporting records to update"
 msgstr "Export des enregistrements à mettre à jour"
 
-#: ../lib/Koha/Contrib/Tamil/Indexer.pm:117
+#: ../lib/Koha/Contrib/Tamil/Indexer.pm:121
 msgid "Exporting records to delete"
 msgstr "Export des enregistrements à supprimer"
 
@@ -35,11 +35,11 @@ msgstr ""
 "[{name}] Indexation notices biblio ({biblio_count}) et d'autorité "
 "({auth_count})"
 
-#: ../lib/Koha/Contrib/Tamil/FileProcess.pm:79
+#: ../lib/Koha/Contrib/Tamil/FileProcess.pm:81
 msgid "Start process...\n"
 msgstr "Démarrage du traitement\n"
 
-#: ../lib/Koha/Contrib/Tamil/FileProcess.pm:90
+#: ../lib/Koha/Contrib/Tamil/FileProcess.pm:92
 #, perl-brace-format
 msgid "One record processed"
 msgid_plural "Records processed: {count}"
@@ -59,9 +59,25 @@ msgstr ""
 "  cible :              {output}\n"
 "  fichier temporaire : {tmp_file}\n"
 
+#: ../lib/Koha/Contrib/Tamil/Authority/FromBiblioTask.pm:91
+#, perl-brace-format
+msgid "  bibios count:   {count}"
+msgstr "  notices biblio traités :  {count}"
+
+#: ../lib/Koha/Contrib/Tamil/Authority/FromBiblioTask.pm:98
+#, perl-brace-format
+msgid ""
+"Sort and de-duplicate\n"
+"  source:         {tmp_file}\n"
+"  target:         {output}\n"
+msgstr ""
+"Tri et dédoublonnage\n"
+"  source :        {tmp_file}\n"
+"  cible  :        {output}\n"
+
 #: ../lib/Koha/Contrib/Tamil/Authority/LoadFileTask.pm:43
 msgid "Truncate table: auth_header\n"
-msgstr ""
+msgstr "Effacement de la table : auth_header\n"
 
 #: ../lib/Koha/Contrib/Tamil/Authority/LoadFileTask.pm:53
 msgid "** TEST **"
@@ -76,4 +92,4 @@ msgid ""
 msgstr ""
 "Chargement des autorités dans Koha à partir d'un fichier {test_flag}\n"
 "  source : {source_file}\n"
-"  crible : Koha DB\n"
+"  cible  : Koha DB\n"

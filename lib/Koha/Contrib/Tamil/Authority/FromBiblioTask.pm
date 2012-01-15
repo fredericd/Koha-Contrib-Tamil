@@ -88,16 +88,18 @@ sub process {
         return 1;
     }
 
-    print "    bibios count:   ", $self->count, "\n";
+    print __x("  bibios count:   {count}",
+              count => $self->count), "\n";
 
     my $tmp_file = $self->tmp_file;
     my $output   = $self->output;
 
-    print <<EOS;
-Sort and de-duplicate
-    source:         $tmp_file
-    target:         $output
-EOS
+    print __x(
+              "Sort and de-duplicate\n" .
+              "  source:         {tmp_file}\n" .
+              "  target:         {output}\n",
+              tmp_file => $tmp_file,
+              target => $target );
     system( "sort -f $tmp_file | uniq -i >$output" );
 
     return 0;

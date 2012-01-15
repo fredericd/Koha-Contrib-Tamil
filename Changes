@@ -1,5 +1,10 @@
 Revision history for Perl module Koha::Contrib::Tamil
 
+0.011 2012-xx-xx
+
+  - Add some tests
+  - Authorities related scripts translability
+
 0.010 2012-01-12
 
   - Authorities indexing works both for Koha instance using DOM filter and

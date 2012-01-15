@@ -50,7 +50,7 @@ elsif ( $command eq 'load_from_file' ) {
     usage() if $#ARGV != 1;
     my $conf_file = shift;
     my $authorities_file = shift;
-    my $task = Koha::Contrib::Tami::Authority::LoadFileTask->new(
+    my $task = Koha::Contrib::Tamil::Authority::LoadFileTask->new(
         conf_file => $conf_file,
         file      => $authorities_file,
         truncate  => $truncate, 
