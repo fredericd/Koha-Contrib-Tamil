@@ -11,7 +11,7 @@ my $MAX = 50000;
 
 has url => ( is => 'rw', isa => 'Str');
 
-has current => ( is => 'rw', isa => 'Int', default => 9999999 );
+has current => ( is => 'rw', isa => 'Int', default => $MAX );
 
 has count => ( is => 'rw', isa => 'Int', default => 0 );
 
@@ -19,21 +19,35 @@ has writer => ( is => 'rw', isa => 'XML::Writer' );
 
 
 
+sub _writer_create {
+    my ($self, $name) = @_;
+    my $fh = IO::File->new(">$name");
+    my $writer = XML::Writer->new(
+        OUTPUT => $fh,
+        DATA_MODE => 1,
+        DATA_INDENT => 2,
+    );
+    return $writer;
+}
+
+
+sub _writer_end {
+    my $self = shift;
+    return unless $self->writer;
+    $self->writer->endTag();
+    $self->writer->end();
+}
+
+
 sub write {
     my ($self, $biblionumber, $timestamp) = @_;
 
-    if ( $self->current >= $MAX ) {
-        $self->writer_end();
+    if ( $self->current == $MAX ) {
+        $self->_writer_end();
         $self->count( $self->count + 1 );
-        my $name = sprintf("sitemap%04d.xml", $self->count); 
-        my $fh = IO::File->new(">$name");
-        my $writer = XML::Writer->new(
-            OUTPUT => $fh,
-            DATA_MODE => 1,
-            DATA_INDENT => 2,
-        );
-        $self->writer($writer);
-        $writer->startTag('urlset', 'xmlns' => 'http://www.sitemaps.org/schemas/sitemap/0.9');
+        my $w = $self->_writer_create( sprintf("sitemap%04d.xml", $self->count) );
+        $w->startTag('urlset', 'xmlns' => 'http://www.sitemaps.org/schemas/sitemap/0.9');
+        $self->writer($w);
         $self->current(0);
     }
 
@@ -51,25 +65,12 @@ sub write {
 }
 
 
-sub writer_end {
-    my $self = shift;
-    return unless $self->writer;
-    $self->writer->endTag();
-    $self->writer->end();
-}
-
-
 sub end {
     my $self = shift;
 
-    $self->writer_end();
+    $self->_writer_end();
 
-    my $fh = IO::File->new(">sitemapindex.xml");
-    my $w = XML::Writer->new(
-        OUTPUT => $fh,
-        DATA_MODE => 1,
-        DATA_INDENT => 2,
-    );
+    my $w = $self->_writer_create("sitemapindex.xml");
     $w->startTag('sitemapindex', 'xmlns' => 'http://www.sitemaps.org/schemas/sitemap/0.9');
     my $now = DateTime->now()->ymd;
     for my $i ( 1..$self->count ) {

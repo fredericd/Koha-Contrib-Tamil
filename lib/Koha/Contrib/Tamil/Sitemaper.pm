@@ -5,7 +5,6 @@ use Moose;
 
 extends 'Koha::Contrib::Tamil::FileProcess';
 
-use Carp;
 use Koha::Contrib::Tamil::Koha;
 use Koha::Contrib::Tamil::Sitemaper::Writer;
 use Locale::TextDomain 'Koha-Contrib-Tamil';
@@ -23,16 +22,8 @@ has verbose => ( is => 'rw', isa => 'Bool', default => 0 );
 
 has sth => ( is => 'rw' );
 
-has writer => (
-    is => 'rw',
-    isa => 'Koha::Contrib::Tamil::Sitemaper::Writer',
-);
+has writer => ( is => 'rw', isa => 'Koha::Contrib::Tamil::Sitemaper::Writer' );
 
-
-
-sub BUILD {
-    my $self = shift;
-}
 
 
 before 'run' => sub {
@@ -40,11 +31,10 @@ before 'run' => sub {
 
     $self->koha( Koha::Contrib::Tamil::Koha->new() ) unless $self->koha;
     $self->writer(
-        Koha::Contrib::Tamil::Sitemaper::Writer->new(
-            url => $self->url ) );
+        Koha::Contrib::Tamil::Sitemaper::Writer->new( url => $self->url ) );
 
     my $sth = $self->koha->dbh->prepare(
-         "SELECT biblionumber, timestamp FROM biblio"  );
+         "SELECT biblionumber, timestamp FROM biblio" );
     $sth->execute();
     $self->sth( $sth );
 };
@@ -71,7 +61,6 @@ sub start_message {
 
 sub end_message {
     my $self = shift;
-
     print __x("Number of biblio records processed: {biblios}\n" .
               "Number of Sitemap files:            {files}\n",
               biblios => $self->count,

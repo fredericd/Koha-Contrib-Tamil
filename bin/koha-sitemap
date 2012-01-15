@@ -10,11 +10,8 @@ use utf8;
 use strict;
 use warnings;
 use Carp;
-use YAML::Syck;
 use Pod::Usage;
 use Getopt::Long;
-use Fatal qw( open );
-use Koha::Contrib::Tamil::Koha;
 use Koha::Contrib::Tamil::Sitemaper;
 
 
@@ -53,7 +50,7 @@ $sitemaper->run();
 =head1 DESCRIPTION
 
 Process all biblio records from a Koha instance and generate Sitemap files
-complying with this protocol as described on http://sitemaps.org. The goal of
+complying with this protocol as described on L<http://sitemaps.org>. The goal of
 this script is to be able to provide to search engines direct access to biblio
 records. It avoid leaving search engine browsing Koha OPAC and so generating
 a lot of traffic, and workload, for a bad result. 
@@ -63,7 +60,7 @@ multiples files. Each file contains at most 50,000 urls, and is named
 F<sitemapXXXX.xml>.
 
 The files must be stored on Koha OPAC root directoty, ie
-F<<koha-root>/koha-tmpl/>. Place also in this directory a <robots.txt> file
+F<<koha-root>/koha-tmpl/>. Place also in this directory a F<robots.txt> file
 like this one:
 
  Sitemap: sitemapindex.xml
