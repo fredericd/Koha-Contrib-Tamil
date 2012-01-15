@@ -99,7 +99,7 @@ sub process {
               "  source:         {tmp_file}\n" .
               "  target:         {output}\n",
               tmp_file => $tmp_file,
-              target => $target );
+              output => $output );
     system( "sort -f $tmp_file | uniq -i >$output" );
 
     return 0;

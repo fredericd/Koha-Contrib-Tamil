@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: Tamil <contact@tamil.fr>\n"
-"POT-Creation-Date: 2012-01-14 10:29+0100\n"
+"POT-Creation-Date: 2012-01-15 14:19+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -38,7 +38,7 @@ msgstr ""
 msgid "Start process...\n"
 msgstr ""
 
-#: ../lib/Koha/Contrib/Tamil/FileProcess.pm:92
+#: ../lib/Koha/Contrib/Tamil/FileProcess.pm:102
 #, perl-brace-format
 msgid "One record processed"
 msgid_plural "Records processed: {count}"
@@ -81,4 +81,15 @@ msgid ""
 "Load authorities into Koha from a file {test_flag}\n"
 "  source: {source_file}\n"
 "  target: Koha DB\n"
+msgstr ""
+
+#: ../lib/Koha/Contrib/Tamil/Sitemaper.pm:68
+msgid "Creation of Sitemap files\n"
+msgstr ""
+
+#: ../lib/Koha/Contrib/Tamil/Sitemaper.pm:75
+#, perl-brace-format
+msgid ""
+"Number of biblio records processed: {biblios}\n"
+"Number of Sitemap files:            {files}\n"
 msgstr ""

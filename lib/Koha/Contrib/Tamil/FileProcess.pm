@@ -51,6 +51,8 @@ sub run_blocking {
 sub run_task {
     my $self = shift;
 
+    $self->start_process();
+
     if ( $self->verbose ) {
         my $watcher = Koha::Contrib::Tamil::EchoWatcher->new(
             delay => 1, action => $self );
@@ -62,6 +64,7 @@ sub run_task {
     my $idle = AnyEvent->idle(
         cb => sub {
             unless ( $self->process() ) {
+                $self->end_process();
                 $self->watcher->stop() if $self->watcher;
                 $end_run->send;
             }
@@ -71,10 +74,7 @@ sub run_task {
 }
 
 
-sub process {
-    my $self = shift;
-    $self->count( $self->count + 1 );
-}
+sub start_process { }
 
 
 sub start_message {
@@ -82,10 +82,20 @@ sub start_message {
 }
 
 
+sub process {
+    my $self = shift;
+    $self->count( $self->count + 1 );
+}
+
+
 sub process_message {
     my $self = shift;
     print sprintf("  %#6d", $self->count), "\n";    
 }
+
+
+sub end_process { return 0; }
+
 
 sub end_message {
     my $self = shift; 
