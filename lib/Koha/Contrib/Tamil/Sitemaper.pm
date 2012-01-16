@@ -40,32 +40,32 @@ before 'run' => sub {
 };
 
 
-sub process {
+override 'process' => sub {
     my $self = shift;
 
     my ($biblionumber, $timestamp) = $self->sth->fetchrow;
-    return 0 unless $biblionumber;
+    return unless $biblionumber;
 
-    $self->SUPER::process();
     $self->writer->write($biblionumber, $timestamp);
-}
+    return super();
+};
 
 
 before 'end_process' => sub { shift->writer->end(); };
 
 
-sub start_message {
+override 'start_message' => sub {
     print __"Creation of Sitemap files\n";
-}
+};
 
 
-sub end_message {
+override 'end_message' => sub {
     my $self = shift;
     print __x("Number of biblio records processed: {biblios}\n" .
               "Number of Sitemap files:            {files}\n",
               biblios => $self->count,
               files => $self->writer->count );
-}
+};
 
 
 no Moose;
