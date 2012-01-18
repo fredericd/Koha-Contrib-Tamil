@@ -7,7 +7,6 @@ use Carp;
 use Koha::Contrib::Tamil::Koha;
 use Koha::Contrib::Tamil::RecordReader;
 use Koha::Contrib::Tamil::RecordWriter::File::Marcxml;
-use Koha::Contrib::Tamil::RecordWriter::File::Iso2709;
 use Koha::Contrib::Tamil::Conversion;
 use File::Path;
 use Locale::TextDomain 'Koha-Contrib-Tamil';
@@ -104,13 +103,10 @@ sub run {
             select => $is_full_indexing ? 'all' : 'queue_update',
             xml    => '1'
         ),
-        writer => $is_biblio_indexing 
-            ? Koha::Contrib::Tamil::RecordWriter::File::Marcxml->new(
-                file    => "$from_dir/update/records",
-                binmode => 'utf8' )
-            : Koha::Contrib::Tamil::RecordWriter::File::Iso2709->new(
-                file    => "$from_dir/update/records",
-                binmode => 'utf8' ),
+        writer => Koha::Contrib::Tamil::RecordWriter::File::Marcxml->new(
+            file    => "$from_dir/update/records",
+            binmode => 'utf8'
+        ),
         blocking    => $self->blocking,
         verbose     => $self->verbose,
     );
@@ -126,13 +122,10 @@ sub run {
                 select => 'queue_delete',
                 xml    => '1'
             ),
-            writer => $is_biblio_indexing
-                ? Koha::Contrib::Tamil::RecordWriter::File::Marcxml->new(
-                    file    => "$from_dir/delete/records",
-                    binmode => 'utf8' )
-                : Koha::Contrib::Tamil::RecordWriter::File::Iso2709->new(
-                    file    => "$from_dir/delete/records",
-                    binmode => 'utf8' ),
+            writer => Koha::Contrib::Tamil::RecordWriter::File::Marcxml->new(
+                file    => "$from_dir/delete/records",
+                binmode => 'utf8'
+            ),
             blocking    => $self->blocking,
             verbose     => $self->verbose,
         );
