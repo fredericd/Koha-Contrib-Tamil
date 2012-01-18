@@ -141,7 +141,7 @@ sub run {
     my $cmd_base = "zebraidx -c " . $zconfig;
     $cmd_base   .= " -n" if $is_full_indexing; # No shadow: no indexing daemon
     $cmd_base   .= $self->verbose ? " -v warning,log" : " -v none";
-    $cmd_base   .= $is_biblio_indexing ? " -g marcxml" : " -g iso2709";
+    $cmd_base   .= " -g marcxml";
     $cmd_base   .= " -d $db_name";
 
     if ( $is_full_indexing ) {
