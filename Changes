@@ -1,5 +1,9 @@
 Revision history for Perl module Koha::Contrib::Tamil
 
+0.012 2011-01-20
+
+  - Drop DOM filter authorities indexing
+
 0.011 2012-01-15
 
   - Add some tests
