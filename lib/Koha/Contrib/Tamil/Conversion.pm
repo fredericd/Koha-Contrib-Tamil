@@ -3,8 +3,6 @@ package Koha::Contrib::Tamil::Conversion;
 
 use Moose;
 
-use Koha::Contrib::Tamil::Converter;
-
 extends 'Koha::Contrib::Tamil::FileProcess';
 
 

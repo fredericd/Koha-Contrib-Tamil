@@ -1,5 +1,9 @@
 Revision history for Perl module Koha::Contrib::Tamil
 
+0.013 2011-02-07
+
+  - Skip a compile test if Koha modules can't be included during installation.
+
 0.012 2011-01-20
 
   - Drop DOM filter authorities indexing
