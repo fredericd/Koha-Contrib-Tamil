@@ -19,8 +19,8 @@ has writer => (
 );
 
 # Le converter qui transforme les notices en notices MARC
-has converter => ( isa => 'Koha::Contrib::Tamil::Converter', is => 'rw' );
-
+#has converter => ( isa => 'Koha::Contrib::Tamil::Converter', is => 'rw' );
+has converter => ( is => 'rw' );
 
 
 sub run  {
