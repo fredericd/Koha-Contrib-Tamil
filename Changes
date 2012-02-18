@@ -1,5 +1,9 @@
 Revision history for Perl module Koha::Contrib::Tamil
 
+0.015
+
+  - Fix Conversion error, doubling call to writer end() method
+
 0.014
 
   - Missing writer->end() call at the end of Conversion process

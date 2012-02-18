@@ -47,7 +47,6 @@ sub process {
         $self->writer->write( $converted_record );
         return 1;
     }
-    $self->writer->end();
     return 0;
 }
 
