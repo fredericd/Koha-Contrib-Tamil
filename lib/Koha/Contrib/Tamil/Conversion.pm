@@ -27,6 +27,7 @@ sub run  {
     my $self = shift;
     $self->writer->begin();
     $self->SUPER::run();
+    $self->writer->end();
 };
 
 
