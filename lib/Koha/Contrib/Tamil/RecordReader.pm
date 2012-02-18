@@ -3,7 +3,8 @@ package Koha::Contrib::Tamil::RecordReader;
 
 use Moose;
 
-extends 'Koha::Contrib::Tamil::RecordReaderBase';
+with 'MooseX::RW::Reader';
+
 
 use Moose::Util::TypeConstraints;
 
@@ -109,7 +110,7 @@ sub read {
     my $self = shift;
     while ( my ($id) = $self->sth->fetchrow ) {
         if ( my $record = $self->get( $id ) ) {
-            $self->SUPER::read();
+            $self->count($self->count+1);
             $self->id( $id );
             return $record;
         }

@@ -2,7 +2,8 @@ package Koha::Contrib::Tamil::RecordWriter::File::Marcxml;
 # ABSTRACT: XML MARC record reader
 use Moose;
 
-extends 'Koha::Contrib::Tamil::RecordWriter::File';
+with 'MooseX::RW::Writer::File';
+
 
 use Carp;
 use MARC::Batch;
@@ -42,9 +43,9 @@ sub DEMOLISH {
 # Sent record is rather a MARC::Record object or an marcxml string
 #
 sub write {
-    my ( $self, $record ) = @_;
+    my ($self, $record) = @_;
 
-    $self->SUPER::write();
+    $self->count( $self->count + 1 );
 
     my $fh  = $self->fh;
     my $xml = ref($record) eq 'MARC::Record'

@@ -1,5 +1,10 @@
 Revision history for Perl module Koha::Contrib::Tamil
 
+0.014
+
+  - Missing writer->end() call at the end of Conversion process
+  - MooseX::RW integration
+
 0.013 2011-02-07
 
   - Skip a compile test if Koha modules can't be included during installation.
