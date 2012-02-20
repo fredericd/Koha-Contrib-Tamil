@@ -1,7 +1,9 @@
 Revision history for Perl module Koha::Contrib::Tamil
 
+
 0.015
 
+  - AnyEvent::Processor integration
   - Fix Conversion error, doubling call to writer end() method
 
 0.014
