@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: Tamil <contact@tamil.fr>\n"
-"POT-Creation-Date: 2012-01-15 14:19+0100\n"
+"POT-Creation-Date: 2012-02-20 11:18+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,11 +17,11 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: ../lib/Koha/Contrib/Tamil/Indexer.pm:99
+#: ../lib/Koha/Contrib/Tamil/Indexer.pm:101
 msgid "Exporting records to update"
 msgstr ""
 
-#: ../lib/Koha/Contrib/Tamil/Indexer.pm:121
+#: ../lib/Koha/Contrib/Tamil/Indexer.pm:118
 msgid "Exporting records to delete"
 msgstr ""
 
@@ -33,17 +33,6 @@ msgstr ""
 #, perl-brace-format
 msgid "[{name}] Index biblio ({biblio_count}) authority ({auth_count})"
 msgstr ""
-
-#: ../lib/Koha/Contrib/Tamil/FileProcess.pm:81
-msgid "Start process...\n"
-msgstr ""
-
-#: ../lib/Koha/Contrib/Tamil/FileProcess.pm:102
-#, perl-brace-format
-msgid "One record processed"
-msgid_plural "Records processed: {count}"
-msgstr[0] ""
-msgstr[1] ""
 
 #: ../lib/Koha/Contrib/Tamil/Authority/FromBiblioTask.pm:40
 #, perl-brace-format
@@ -83,11 +72,11 @@ msgid ""
 "  target: Koha DB\n"
 msgstr ""
 
-#: ../lib/Koha/Contrib/Tamil/Sitemaper.pm:68
+#: ../lib/Koha/Contrib/Tamil/Sitemaper.pm:58
 msgid "Creation of Sitemap files\n"
 msgstr ""
 
-#: ../lib/Koha/Contrib/Tamil/Sitemaper.pm:75
+#: ../lib/Koha/Contrib/Tamil/Sitemaper.pm:64
 #, perl-brace-format
 msgid ""
 "Number of biblio records processed: {biblios}\n"

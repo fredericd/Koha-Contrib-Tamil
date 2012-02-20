@@ -2,7 +2,7 @@ package Koha::Contrib::Tamil::Authority::Task;
 # ABSTRACT: Base class for managing authorities manipulations
 use Moose;
 
-extends 'Koha::Contrib::Tamil::FileProcess';
+extends 'AnyEvent::Processor';
 
 use 5.010;
 use utf8;

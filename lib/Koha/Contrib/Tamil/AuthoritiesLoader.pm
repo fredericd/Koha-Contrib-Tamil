@@ -3,7 +3,7 @@ package Koha::Contrib::Tamil::AuthoritiesLoader;
 
 use Moose;
 
-extends 'Koha::Contrib::Tamil::FileProcess';
+extends 'AnyEvent::Processor';
 
 use Carp;
 use IO::File;

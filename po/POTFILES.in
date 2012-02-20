@@ -1,6 +1,5 @@
 ../lib/Koha/Contrib/Tamil/Indexer.pm
 ../lib/Koha/Contrib/Tamil/IndexerDaemon.pm
-../lib/Koha/Contrib/Tamil/FileProcess.pm
 ../lib/Koha/Contrib/Tamil/Authority/FromBiblioTask.pm
 ../lib/Koha/Contrib/Tamil/Authority/LoadFileTask.pm
 ../lib/Koha/Contrib/Tamil/Sitemaper.pm

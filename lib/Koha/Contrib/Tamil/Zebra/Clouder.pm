@@ -4,7 +4,7 @@ package Koha::Contrib::Tamil::Zebra::Clouder;
 use Moose;
 use Carp;
 
-extends 'Koha::Contrib::Tamil::FileProcess';
+extends 'AnyEvent::Processor';
 
 my $MAX_OCCURENCE = 1000000000;
 

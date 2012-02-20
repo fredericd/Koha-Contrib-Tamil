@@ -3,12 +3,15 @@ package Koha::Contrib::Tamil::Indexer;
 
 use Moose;
 
+use 5.010;
+use utf8;
 use Carp;
 use Koha::Contrib::Tamil::Koha;
 use Koha::Contrib::Tamil::RecordReader;
 use Koha::Contrib::Tamil::RecordWriter::File::Marcxml;
-use Koha::Contrib::Tamil::Conversion;
+use AnyEvent::Processor::Conversion;
 use File::Path;
+use IO::File;
 use Locale::TextDomain 'Koha-Contrib-Tamil';
 
 
@@ -96,7 +99,7 @@ sub run {
 
     # STEP 1.1: Records to update
     print __"Exporting records to update", "\n" if $self->verbose;
-    my $exporter = Koha::Contrib::Tamil::Conversion->new(
+    my $exporter = AnyEvent::Processor::Conversion->new(
         reader => Koha::Contrib::Tamil::RecordReader->new(
             koha   => $self->koha,
             source => $self->source,
@@ -104,9 +107,7 @@ sub run {
             xml    => '1'
         ),
         writer => Koha::Contrib::Tamil::RecordWriter::File::Marcxml->new(
-            file    => "$from_dir/update/records",
-            binmode => 'utf8'
-        ),
+            fh => IO::File->new( "$from_dir/update/records", '>:utf8' ) ),
         blocking    => $self->blocking,
         verbose     => $self->verbose,
     );
@@ -115,7 +116,7 @@ sub run {
     # STEP 1.2: Record to delete, if zebraqueue
     if ( ! $is_full_indexing ) {
         print __"Exporting records to delete", "\n" if $self->verbose;
-        $exporter = Koha::Contrib::Tamil::Conversion->new(
+        $exporter = AnyEvent::Processor::Conversion->new(
             reader => Koha::Contrib::Tamil::RecordReader->new(
                 koha   => $self->koha,
                 source => $self->source,
@@ -123,9 +124,7 @@ sub run {
                 xml    => '1'
             ),
             writer => Koha::Contrib::Tamil::RecordWriter::File::Marcxml->new(
-                file    => "$from_dir/delete/records",
-                binmode => 'utf8'
-            ),
+                fh => IO::File->new( "$from_dir/delete/records", '>:utf8' ) ),
             blocking    => $self->blocking,
             verbose     => $self->verbose,
         );

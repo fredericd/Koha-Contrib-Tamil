@@ -3,7 +3,7 @@ package Koha::Contrib::Tamil::Sitemaper;
 
 use Moose;
 
-extends 'Koha::Contrib::Tamil::FileProcess';
+extends 'AnyEvent::Processor';
 
 use Koha::Contrib::Tamil::Koha;
 use Koha::Contrib::Tamil::Sitemaper::Writer;
