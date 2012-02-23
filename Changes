@@ -1,5 +1,8 @@
 Revision history for Perl module Koha::Contrib::Tamil
 
+0.016
+
+  - Fix authorities loading and logging
 
 0.015
 
