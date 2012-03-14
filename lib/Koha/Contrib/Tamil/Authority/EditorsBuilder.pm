@@ -38,13 +38,13 @@ has biblionumbers => ( is => 'rw', isa => 'ArrayRef' );
 
 
 
-sub run {
+before 'run' => sub {
     my ($self, $delete) = @_;
 
     my $sth = $self->koha->dbh->prepare(
         "SELECT biblionumber
            FROM biblioitems
-          WHERE biblionumber > 0 AND biblionumber < 200000" );
+          WHERE biblionumber > 0 AND biblionumber < 200" );
     $sth->execute;
     my @biblionumbers = ();
     while (my ($biblionumber) = $sth->fetchrow) {
@@ -54,11 +54,10 @@ sub run {
 
     say "Step 1: Extracting isbn-editors-collections from biblio records"
         if $self->verbose;
-    $self->SUPER::run();
-}
+};
 
 
-sub process {
+override 'process' => sub {
     my $self = shift;
 
     if ( $self->count == @{$self->biblionumbers} ) {
@@ -126,15 +125,15 @@ sub process {
     $editor->[1]->{$collection}++;
 
     return 1;
-}
+};
 
 
-sub process_message {
+override 'process_message' => sub {
     my $self = shift;
     my $total = @{ $self->biblionumbers } + 0;
     my $percent = $self->count * 100 / $total;
     print sprintf("  %#6d / %d (%d", $self->count, $total, $percent) . "%)\n";
-}
+};
 
 
 no Moose;
