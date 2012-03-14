@@ -7,7 +7,7 @@ extends 'AnyEvent::Processor';
 use 5.010;
 use utf8;
 use Carp;
-use YAML::Syck;
+use YAML;
 
 has conf_authorities => ( is => 'rw', isa => 'ArrayRef' );
 
@@ -27,5 +27,4 @@ has conf_file => (
 
 no Moose;
 __PACKAGE__->meta->make_immutable;
-
 1;
