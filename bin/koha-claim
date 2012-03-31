@@ -2,8 +2,8 @@
 
 package main;
 
-# PODNAME: koha-index
-# ABSTRACT: Index Koha biblio/authority records
+# PODNAME: koha-claim
+# ABSTRACT: Claim overdues each day, grouping same overdues
 
 
 use strict;
