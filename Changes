@@ -1,5 +1,9 @@
 Revision history for Perl module Koha::Contrib::Tamil
 
+0.019 2012-03-29
+
+  - Hot fix bug introduced by 0.017
+
 0.018 2012-03-26
 
   - koha-claim: overdues claim script.
