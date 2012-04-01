@@ -54,6 +54,12 @@ has id => ( is => 'rw' );
 # Items extraction required
 has itemsextraction => ( is => 'rw', isa => 'Bool', default => 0 );
 
+# Read all records? (or queued records)
+has allrecords => ( is => 'rw', isa => 'Bool', default => 1 );
+
+# Mark as done an entry is Zebra queue
+has sth_queue_done => ( is => 'rw' );
+
 # Items tag
 has itemtag => ( is => 'rw' );
 
@@ -77,21 +83,27 @@ sub BUILD {
     my $operation = $self->select =~ /update/i
                     ? 'specialUpdate'
                     : 'recordDelete';
+    $self->allrecords( $self->select =~ /all/i ? 1 : 0 );
     my $sql =
         $self->source =~ /biblio/i
-            ? $self->select =~ /all/i
-                ? "SELECT biblionumber FROM biblio"
-                : "SELECT biblio_auth_number FROM zebraqueue
+            ? $self->allrecords
+                ? "SELECT NULL, biblionumber FROM biblio"
+                : "SELECT id, biblio_auth_number FROM zebraqueue
                    WHERE server = 'biblioserver'
                      AND operation = '$operation' AND done = 0"
-            : $self->select =~ /all/i
-                ? "SELECT authid FROM auth_header"
-                : "SELECT biblio_auth_number FROM zebraqueue
+            : $self->allrecords
+                ? "SELECT NULL, authid FROM auth_header"
+                : "SELECT id, biblio_auth_number FROM zebraqueue
                    WHERE server = 'authorityserver'
                      AND operation = '$operation' AND done = 0";
     my $sth = $self->koha->dbh->prepare( $sql );
     $sth->execute();
     $self->sth( $sth );
+
+    unless ( $self->allrecords ) {
+        $self->sth_queue_done( $self->koha->dbh->prepare(
+            "UPDATE zebraqueue SET done=1 WHERE id=?" ) );
+    }
 
     __PACKAGE__->meta->add_method( 'get' =>
         $self->source =~ /biblio/i
@@ -108,7 +120,9 @@ sub BUILD {
 
 sub read {
     my $self = shift;
-    while ( my ($id) = $self->sth->fetchrow ) {
+    while ( my ($queue_id, $id) = $self->sth->fetchrow ) {
+        # Suppress entry in zebraqueue table
+        $self->sth_queue_done->execute($queue_id) if $queue_id;
         if ( my $record = $self->get( $id ) ) {
             $self->count($self->count+1);
             $self->id( $id );

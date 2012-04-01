@@ -163,12 +163,6 @@ sub run {
         my $cmd = "$cmd_base commit";
         print "$cmd\n" if $self->verbose;
         system( $cmd );
-
-        # Update zebraqueue
-        my $sql = "UPDATE zebraqueue SET done=1 WHERE server = ?";
-        my $sth = $self->koha->dbh->prepare( $sql );
-        $sth->execute( 
-            $self->source =~ /biblio/ ? 'biblioserver' : 'authorityserver' );
     }
 }
 
