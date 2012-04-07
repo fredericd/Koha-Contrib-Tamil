@@ -36,10 +36,11 @@ sub BUILD {
             say "Bad rule: $_";
             next;
         }
+        my $branchcode = $branch eq '*' ? '' : $branch;
         $rule->{"$branch-$itype-$day"} = {
             action => $action,
             notice => $notice,
-            letter => C4::Letters::getletter('circulation', $notice),
+            letter => C4::Letters::getletter('circulation', $notice, $branchcode),
         };
     }
     unless ( keys %$rule ) {
