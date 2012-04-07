@@ -1,5 +1,10 @@
 Revision history for Perl module Koha::Contrib::Tamil
 
+0.020 2012-04-07
+
+  - Fix a bug in zebraqueue handling
+  - DOM indexing
+
 0.019 2012-03-29
 
   - Hot fix bug introduced by 0.017
