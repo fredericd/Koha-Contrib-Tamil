@@ -11,7 +11,7 @@ use MARC::Record;
 use MARC::File::XML;
 
 
-# Is XML Stream a valid marxml
+# Is XML Stream a valid marcxml
 # By default no => no <collection> </collection>
 has valid => (
     is => 'rw',
@@ -20,21 +20,22 @@ has valid => (
 );
 
 
-sub BUILD {
+sub begin {
     my $self = shift;
     if ( $self->valid ) {
         my $fh = $self->fh;
-        print $fh '<collection>', "\n";
+        print $fh '<?xml version="1.0" encoding="UTF-8"?>', "\n", '<collection>', "\n";
     }
 }
 
 
-sub DEMOLISH {
+sub end {
     my $self = shift;
+    my $fh = $self->fh;
     if ( $self->valid ) {
-        my $fh = $self->fh;
         print $fh '</collection>', "\n";
     }
+    $fh->flush();
 }
 
 

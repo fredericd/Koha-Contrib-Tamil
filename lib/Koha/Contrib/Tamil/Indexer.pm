@@ -100,6 +100,11 @@ sub run {
         mkdir $dir;
     }
 
+    # DOM indexing? otherwise GRS-1
+    my $is_dom = $self->source eq 'biblio' ? 'zebra_bib_index_mode' : 'zebra_auth_index_mode';
+    $is_dom = $self->koha->conf->{config}->{$is_dom} || '';
+    $is_dom = $is_dom =~ /dom/i ? 1 : 0;
+
     # STEP 1.1: Records to update
     print __"Exporting records to update", "\n" if $self->verbose;
     my $exporter = AnyEvent::Processor::Conversion->new(
@@ -110,7 +115,8 @@ sub run {
             xml    => '1'
         ),
         writer => Koha::Contrib::Tamil::RecordWriter::File::Marcxml->new(
-            fh => IO::File->new( "$from_dir/update/records", '>:utf8' ) ),
+            fh => IO::File->new( "$from_dir/update/records", '>:utf8' ),
+            valid => $is_dom ),
         blocking    => $self->blocking,
         verbose     => $self->verbose,
     );
@@ -127,7 +133,8 @@ sub run {
                 xml    => '1'
             ),
             writer => Koha::Contrib::Tamil::RecordWriter::File::Marcxml->new(
-                fh => IO::File->new( "$from_dir/delete/records", '>:utf8' ) ),
+                fh => IO::File->new( "$from_dir/delete/records", '>:utf8' ),
+                valid => $is_dom ),
             blocking    => $self->blocking,
             verbose     => $self->verbose,
         );
