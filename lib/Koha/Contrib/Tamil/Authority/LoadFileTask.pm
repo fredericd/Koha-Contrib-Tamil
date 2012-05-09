@@ -7,7 +7,9 @@ extends 'Koha::Contrib::Tamil::Authority::Task';
 
 with 'MooseX::LogDispatch';
 
- 
+
+use 5.010;
+use utf8;
 use Locale::TextDomain 'Koha-Contrib-Tamil';
 
 

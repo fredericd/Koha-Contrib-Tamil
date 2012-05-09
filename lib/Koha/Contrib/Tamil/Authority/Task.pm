@@ -7,7 +7,7 @@ extends 'AnyEvent::Processor';
 use 5.010;
 use utf8;
 use Carp;
-use YAML;
+use YAML qw( LoadFile );
 
 has conf_authorities => ( is => 'rw', isa => 'ArrayRef' );
 
