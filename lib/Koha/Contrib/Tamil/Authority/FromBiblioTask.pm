@@ -63,6 +63,7 @@ sub process {
                     my $concat = '';
                     foreach my $subfield ( $field->subfields() ) {
                         my ($letter, $value) = @$subfield;
+                        next if $letter !~ /[a-zA-Z0-9]/;
                         #chop $value;
                         $value =~ s/^\s+//;
                         $value =~ s/\s+$//;
