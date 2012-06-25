@@ -1,5 +1,9 @@
 Revision history for Perl module Koha::Contrib::Tamil
 
+0.023 2012-06-25
+
+  - Fix koha-claim for 3.8.2 which introduces an hourly loan
+
 0.022 2012-05-10
 
   - Fix a test failing depending on Koha version
