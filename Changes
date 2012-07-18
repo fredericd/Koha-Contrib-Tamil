@@ -1,5 +1,9 @@
 Revision history for Perl module Koha::Contrib::Tamil
 
+0.024 2012-07-18
+
+  - Fix koha-index. Authority deletion wasn't working when DOM indexing enabled
+
 0.023 2012-06-25
 
   - Fix koha-claim for 3.8.2 which introduces an hourly loan
