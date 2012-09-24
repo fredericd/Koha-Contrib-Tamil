@@ -1,5 +1,9 @@
 Revision history for Perl module Koha::Contrib::Tamil
 
+0.025 2012-09-24
+
+  - Add a --keep parameter to koha-index command
+
 0.024 2012-07-18
 
   - Fix koha-index. Authority deletion wasn't working when DOM indexing enabled

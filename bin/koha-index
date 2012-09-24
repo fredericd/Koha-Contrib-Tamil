@@ -34,7 +34,7 @@ __END__
  koha-index --source authority --select all
 
  koha-index conf /etc/koha/mylib.xml --select queue \\
-            --directory /tmp/koha-index-mylib
+            --directory /tmp/koha-index-mylib --keep
 
 =head1 DESCRIPTION
 
@@ -63,6 +63,11 @@ current directory. In this directory, sub-directories are created containing
 records to be updated or deleted by Zebra. If those subdirectories already
 exist, they are first emptied. The export directory tree is kept after zebra
 indexing.
+
+=item --keep
+
+Keep the directory, and its content, where biblio/authority records have been
+exported.
 
 =item --conf
 

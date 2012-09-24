@@ -107,6 +107,7 @@ sub index_zebraqueue {
             source      => $source,
             select      => 'queue',
             blocking    => 1,
+            keep        => 1,
             verbose     => $self->verbose,
         );
         $indexer->directory($self->directory) if $self->directory;

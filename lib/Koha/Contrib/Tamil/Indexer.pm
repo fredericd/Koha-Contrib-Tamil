@@ -53,6 +53,8 @@ has directory => (
     default => './koha-index',
 );
 
+has keep => ( is => 'rw', isa => 'Bool', default => 0 );
+
 has verbose => ( is => 'rw', isa => 'Bool', default => 0 );
 
 has help => (
@@ -171,6 +173,8 @@ sub run {
         print "$cmd\n" if $self->verbose;
         system( $cmd );
     }
+
+    rmtree( $self->directory ) unless $self->keep;
 }
 
 
