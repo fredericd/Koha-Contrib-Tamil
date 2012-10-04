@@ -1,5 +1,10 @@
 Revision history for Perl module Koha::Contrib::Tamil
 
+0.026 2012-10-04
+
+  - Force DBD::mysql to reconnect automaticaly. Required by (very) long running
+    process, like webapps.
+
 0.025 2012-09-24
 
   - Add a --keep parameter to koha-index command

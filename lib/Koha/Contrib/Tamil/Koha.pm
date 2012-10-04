@@ -66,6 +66,7 @@ sub BUILD {
         # Force utf8 communication between MySQL and koha
         $self->dbh->{ mysql_enable_utf8 } = 1;
         $self->dbh->do( "set NAMES 'utf8'" );
+        $self->dbh->{ mysql_auto_reconnect } = 1;
         my $tz = $ENV{TZ};
         ($tz) and $self->dbh->do( qq(SET time_zone = "$tz") );
     }
