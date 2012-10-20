@@ -114,7 +114,9 @@ sub zconn {
     #print "zconn: nouvelle connexion\n";
     my $c        = $self->conf;
     my $name     = $server eq 'biblio' ? 'biblioserver' : 'authorityserver';
-    my $syntax   = "usmarc";
+    my $syntax   = $c->{server}->{$name}->{retrievalinfo}->{retrieval};
+    $syntax = [ grep { $_->{name} && $_->{name} eq 'F' && $_->{syntax} ne 'xml' } @$syntax ];
+    $syntax = $syntax->[0]->{syntax};
     my $host     = $c->{listen}->{$name}->{content};
     my $user     = $c->{serverinfo}->{$name}->{user};
     my $password = $c->{serverinfo}->{$name}->{password};
