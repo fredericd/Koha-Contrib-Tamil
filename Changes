@@ -1,5 +1,12 @@
 Revision history for Perl module Koha::Contrib::Tamil
 
+0.027 2012-10-21
+
+  - Use syntax (marc21/unimarc) from koha-conf.xml in ZOOM connection to Zebra
+    server. Required when Koha Z39.50 is able to return not only usmarc.
+  - For Koha >3.09, take into accout IncludeSeeFromInSearches syspref. This
+    slow down, again, indexing, by a 2 orders of magnitude (20 time slower).
+
 0.026 2012-10-04
 
   - Force DBD::mysql to reconnect automaticaly. Required by (very) long running
