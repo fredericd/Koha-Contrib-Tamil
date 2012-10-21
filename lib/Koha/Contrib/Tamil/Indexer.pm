@@ -117,7 +117,7 @@ sub run {
             xml    => '1'
         ),
         writer => Koha::Contrib::Tamil::RecordWriter::File::Marcxml->new(
-            fh => IO::File->new( "$from_dir/update/records", '>:utf8' ),
+            fh => IO::File->new( "$from_dir/update/records", '>:encoding(utf8)' ),
             valid => $is_dom ),
         blocking    => $self->blocking,
         verbose     => $self->verbose,
