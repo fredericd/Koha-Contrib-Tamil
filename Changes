@@ -1,5 +1,10 @@
 Revision history for Perl module Koha::Contrib::Tamil
 
+0.028 2012-10-25
+
+  - Suppress Koha::RecordProcessor dependency which is useless prior 3.10
+    version, and can fail module installation
+
 0.027 2012-10-21
 
   - Use syntax (marc21/unimarc) from koha-conf.xml in ZOOM connection to Zebra
