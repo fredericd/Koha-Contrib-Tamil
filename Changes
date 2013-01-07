@@ -1,5 +1,9 @@
 Revision history for Perl module Koha::Contrib::Tamil
 
+0.029 2013-01-07
+
+  - Fix new authorities loading bug.
+
 0.028 2012-10-25
 
   - Suppress Koha::RecordProcessor dependency which is useless prior 3.10

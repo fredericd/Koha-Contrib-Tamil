@@ -44,7 +44,7 @@ before 'run' => sub {
     my $sth = $self->koha->dbh->prepare(
         "SELECT biblionumber
            FROM biblioitems
-          WHERE biblionumber > 0 AND biblionumber < 200" );
+    ");
     $sth->execute;
     my @biblionumbers = ();
     while (my ($biblionumber) = $sth->fetchrow) {

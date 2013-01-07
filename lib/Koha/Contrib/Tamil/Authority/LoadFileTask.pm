@@ -90,10 +90,11 @@ sub process {
     my $self = shift;
     my $fh = $self->fh;
 
-    if ( defined($_ = <$fh>) ) {
+    my $line = <$fh>; 
+    if ( defined($line) ) {
         $self->SUPER::process();
-        chop;
-        my ($authcode, $sub) = /(\w+)\t(.*)/;
+        chop $line;
+        my ($authcode, $sub) = $line =~ /(\w+)\t(.*)/;
         my (@subfields) = split /\t|\|/, $sub; 
         #print "auth_code => $sub\n";
         #print "tbl : ", @subfields, "\n";
