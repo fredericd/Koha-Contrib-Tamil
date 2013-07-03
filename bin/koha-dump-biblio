@@ -1,5 +1,8 @@
 #!/usr/bin/perl
 
+# PODNAME: koha-dump-biblio
+# ABSTRACT: Dump a Koha Catalog
+
 use Modern::Perl;
 use Pod::Usage;
 use Getopt::Long;
