@@ -8,19 +8,20 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: Tamil <contact@tamil.fr>\n"
-"POT-Creation-Date: 2012-02-20 11:18+0100\n"
+"POT-Creation-Date: 2013-07-03 14:32+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: ../lib/Koha/Contrib/Tamil/Indexer.pm:101
+#: ../lib/Koha/Contrib/Tamil/Indexer.pm:111
 msgid "Exporting records to update"
 msgstr ""
 
-#: ../lib/Koha/Contrib/Tamil/Indexer.pm:118
+#: ../lib/Koha/Contrib/Tamil/Indexer.pm:129
 msgid "Exporting records to delete"
 msgstr ""
 
@@ -42,12 +43,12 @@ msgid ""
 "  temporary file: {tmp_file}\n"
 msgstr ""
 
-#: ../lib/Koha/Contrib/Tamil/Authority/FromBiblioTask.pm:91
+#: ../lib/Koha/Contrib/Tamil/Authority/FromBiblioTask.pm:92
 #, perl-brace-format
 msgid "  bibios count:   {count}"
 msgstr ""
 
-#: ../lib/Koha/Contrib/Tamil/Authority/FromBiblioTask.pm:98
+#: ../lib/Koha/Contrib/Tamil/Authority/FromBiblioTask.pm:99
 #, perl-brace-format
 msgid ""
 "Sort and de-duplicate\n"
@@ -55,15 +56,15 @@ msgid ""
 "  target:         {output}\n"
 msgstr ""
 
-#: ../lib/Koha/Contrib/Tamil/Authority/LoadFileTask.pm:43
+#: ../lib/Koha/Contrib/Tamil/Authority/LoadFileTask.pm:68
 msgid "Truncate table: auth_header\n"
 msgstr ""
 
-#: ../lib/Koha/Contrib/Tamil/Authority/LoadFileTask.pm:53
+#: ../lib/Koha/Contrib/Tamil/Authority/LoadFileTask.pm:78
 msgid "** TEST **"
 msgstr ""
 
-#: ../lib/Koha/Contrib/Tamil/Authority/LoadFileTask.pm:56
+#: ../lib/Koha/Contrib/Tamil/Authority/LoadFileTask.pm:81
 #, perl-brace-format
 msgid ""
 "Load authorities into Koha from a file {test_flag}\n"
@@ -80,4 +81,14 @@ msgstr ""
 msgid ""
 "Number of biblio records processed: {biblios}\n"
 "Number of Sitemap files:            {files}\n"
+msgstr ""
+
+#: ../lib/Koha/Contrib/Tamil/Biblio/Dumper.pm:124
+#, perl-brace-format
+msgid "Dump of Koha Catalog into file: {file}"
+msgstr ""
+
+#: ../lib/Koha/Contrib/Tamil/Biblio/Dumper.pm:137
+#, perl-brace-format
+msgid "Number of biblio records exported: {biblios}"
 msgstr ""

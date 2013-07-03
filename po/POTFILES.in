@@ -3,3 +3,4 @@
 ../lib/Koha/Contrib/Tamil/Authority/FromBiblioTask.pm
 ../lib/Koha/Contrib/Tamil/Authority/LoadFileTask.pm
 ../lib/Koha/Contrib/Tamil/Sitemaper.pm
+../lib/Koha/Contrib/Tamil/Biblio/Dumper.pm

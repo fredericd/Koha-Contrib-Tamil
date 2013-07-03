@@ -1,5 +1,9 @@
 Revision history for Perl module Koha::Contrib::Tamil
 
+0.030 2013-07-03
+
+  - Add script koha-dump-biblio
+
 0.029 2013-01-07
 
   - Fix new authorities loading bug.

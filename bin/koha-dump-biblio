@@ -1,0 +1,58 @@
+#!/usr/bin/perl
+
+use Modern::Perl;
+use Pod::Usage;
+use Getopt::Long;
+use Koha::Contrib::Tamil::Biblio::Dumper;
+
+
+my $verbose  = 0;
+my $help     = 0;
+my $formater = 'iso2709';
+my @branches;
+GetOptions( 
+    'verbose'    => \$verbose,
+    'branch=s'   => \@branches,
+    'formater=s' => \$formater,
+    'help'       => \$help,
+);
+
+sub usage {
+    pod2usage( -verbose => 2 );
+} 
+
+
+usage() if $help;          
+
+my $file = $ARGV[0] // 'dump.mrc';
+
+my $dumper = Koha::Contrib::Tamil::Biblio::Dumper->new(
+    verbose => $verbose,
+    file => $file,
+    branches => \@branches,
+    formater => $formater,
+);
+$dumper->run();
+
+=head1 NAME
+
+koha-dump-biblio - Dump a Koha Catalog
+
+=head1 SYNOPSYS
+
+ koha-dump-biblio
+ koha-dump-biblio --branch MAIN
+ koha-dump-biblio --branch MAIN --branch EAST --file catalog.mrc
+ koha-dump-biblio --branch MAIN --formater marcxml --file catalog.xml
+
+=head1 COPYRIGHT AND LICENSE
+
+Copyright 2013 by Tamil, s.a.r.l.
+
+L<http://www.tamil.fr>
+
+This library is free software; you can redistribute it and/or modify it under
+the same terms as Perl 5 itself.
+
+=cut
+
