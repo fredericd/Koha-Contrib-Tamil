@@ -13,9 +13,11 @@ my $verbose  = 0;
 my $help     = 0;
 my $formater = 'iso2709';
 my @branches;
+my $query    = '';
 GetOptions( 
     'verbose'    => \$verbose,
     'branch=s'   => \@branches,
+    'query=s'    => \$query,
     'formater=s' => \$formater,
     'help'       => \$help,
 );
@@ -33,6 +35,7 @@ my $dumper = Koha::Contrib::Tamil::Biblio::Dumper->new(
     verbose  => $verbose,
     file     => $file,
     branches => \@branches,
+    query    => $query,
     formater => $formater,
 );
 $dumper->run();
@@ -47,6 +50,7 @@ koha-dump-biblio - Dump a Koha Catalog
  koha-dump-biblio --branch MAIN
  koha-dump-biblio --branch MAIN --branch EAST catalog.mrc
  koha-dump-biblio --branch MAIN --formater marcxml catalog.xml
+ koha-dump-biblio --branch MAIN --query "SELECT biblionumber FROM items WHERE barcode LIKE 'X%' --formater marcxml catalog.xml
 
 =head1 COPYRIGHT AND LICENSE
 

@@ -1,5 +1,11 @@
 Revision history for Perl module Koha::Contrib::Tamil
 
+0.031 2013-07-10
+
+  - Improve koha-dump-biblio
+    - Add a -query parameter to select biblio recorc to export
+    - Fix items selection
+
 0.030 2013-07-03
 
   - Add script koha-dump-biblio

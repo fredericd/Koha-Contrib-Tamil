@@ -6,6 +6,7 @@ use Moose;
 extends 'AnyEvent::Processor';
 
 use Modern::Perl;
+use utf8;
 use Koha::Contrib::Tamil::Koha;
 use MARC::Moose::Record;
 use MARC::Moose::Writer;
@@ -23,13 +24,14 @@ has branches => (
     default => sub { [] }
 );
 
-has where => ( is => 'rw', isa => 'Str', default => '' );
+# Optional query to select biblio records to dump
+has query => ( is => 'rw', isa => 'Str', default => '' );
 
 has convert => (
     is => 'rw',
-    default => sub {
+    default => sub { sub {
         return shift;
-    },
+    } },
 );
 
 has formater => (
@@ -59,31 +61,29 @@ before 'run' => sub {
 
     $self->koha( Koha::Contrib::Tamil::Koha->new() ) unless $self->koha;
 
-    my $where = $self->where;
-    if ( $where ) {
-        $where = " WHERE $where";
+    my $query = $self->query;
+    my $where = "";
+    if ( my $branches = $self->branches ) {
+        $where = 'homebranch IN (' .
+                 join(',', map {"'$_'" } @$branches) . ')'
+            if @$branches;
     }
-    else {
-        if ( my $branches = $self->branches ) {
-            $where = ' WHERE homebranch IN (' .
-                    join(',', map {"'$_'" } @$branches) . ')'
-                if @$branches;
-        }
+    unless ($query) {
+        $query = "SELECT DISTINCT biblionumber FROM items";
+        $query = "$query WHERE $where" if $where;
     }
-    my $sql = "SELECT DISTINCT biblionumber FROM items" . $where;
-    say $sql;
-    my $sth = $self->koha->dbh->prepare($sql);
+    #say $query;
+    my $sth = $self->koha->dbh->prepare($query);
     $sth->execute();
-    $self->sth( $sth );
+    $self->sth($sth);
 
     $self->sth_marcxml( $self->koha->dbh->prepare(
         "SELECT marcxml FROM biblioitems WHERE biblionumber=?" ) );
 
-    $where = $where
-             ? $where . " AND biblionumber=?"
-             : " WHERE biblionumber=?";
-    $self->sth_item( $self->koha->dbh->prepare(
-        "SELECT * FROM items" . $where ) );
+    $query = "SELECT * FROM items WHERE biblionumber=?";
+    $query .= " AND $where" if $where;
+    #say $query;
+    $self->sth_item( $self->koha->dbh->prepare($query));
 
     my $fh = new IO::File '> ' . $self->file;
     binmode($fh, ':encoding(utf8)');
