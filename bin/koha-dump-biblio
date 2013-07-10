@@ -30,8 +30,8 @@ usage() if $help;
 my $file = $ARGV[0] // 'dump.mrc';
 
 my $dumper = Koha::Contrib::Tamil::Biblio::Dumper->new(
-    verbose => $verbose,
-    file => $file,
+    verbose  => $verbose,
+    file     => $file,
     branches => \@branches,
     formater => $formater,
 );
@@ -45,8 +45,8 @@ koha-dump-biblio - Dump a Koha Catalog
 
  koha-dump-biblio
  koha-dump-biblio --branch MAIN
- koha-dump-biblio --branch MAIN --branch EAST --file catalog.mrc
- koha-dump-biblio --branch MAIN --formater marcxml --file catalog.xml
+ koha-dump-biblio --branch MAIN --branch EAST catalog.mrc
+ koha-dump-biblio --branch MAIN --formater marcxml catalog.xml
 
 =head1 COPYRIGHT AND LICENSE
 

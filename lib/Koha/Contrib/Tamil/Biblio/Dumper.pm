@@ -7,7 +7,6 @@ extends 'AnyEvent::Processor';
 
 use Modern::Perl;
 use Koha::Contrib::Tamil::Koha;
-use Koha::Contrib::Tamil::Sitemaper::Writer;
 use MARC::Moose::Record;
 use MARC::Moose::Writer;
 use MARC::Moose::Formater::Iso2709;
@@ -15,12 +14,22 @@ use C4::Biblio;
 use C4::Items;
 use Locale::TextDomain 'Koha-Contrib-Tamil';
 
+
 has file => ( is => 'rw', isa => 'Str', default => 'dump.mrc' );
 
 has branches => (
     is => 'rw',
     isa => 'ArrayRef',
-    default => sub { {} }
+    default => sub { [] }
+);
+
+has where => ( is => 'rw', isa => 'Str', default => '' );
+
+has convert => (
+    is => 'rw',
+    default => sub {
+        return shift;
+    },
 );
 
 has formater => (
@@ -49,16 +58,20 @@ before 'run' => sub {
     my $self = shift;
 
     $self->koha( Koha::Contrib::Tamil::Koha->new() ) unless $self->koha;
-    #$self->writer(
-    #    Koha::Contrib::Tamil::Sitemaper::Writer->new( url => $self->url ) );
 
-    my $where = '';
-    if ( my $branches = $self->branches ) {
-        $where = ' WHERE homebranch IN (' .
-                join(',', map {"'$_'" } @$branches) . ')'
-            if @$branches;
+    my $where = $self->where;
+    if ( $where ) {
+        $where = " WHERE $where";
+    }
+    else {
+        if ( my $branches = $self->branches ) {
+            $where = ' WHERE homebranch IN (' .
+                    join(',', map {"'$_'" } @$branches) . ')'
+                if @$branches;
+        }
     }
     my $sql = "SELECT DISTINCT biblionumber FROM items" . $where;
+    say $sql;
     my $sth = $self->koha->dbh->prepare($sql);
     $sth->execute();
     $self->sth( $sth );
@@ -71,7 +84,6 @@ before 'run' => sub {
              : " WHERE biblionumber=?";
     $self->sth_item( $self->koha->dbh->prepare(
         "SELECT * FROM items" . $where ) );
-
 
     my $fh = new IO::File '> ' . $self->file;
     binmode($fh, ':encoding(utf8)');
@@ -94,10 +106,12 @@ override 'process' => sub {
     my ($biblionumber) = $self->sth->fetchrow;
     return unless $biblionumber;
 
+    # Get the biblio record
     $self->sth_marcxml->execute($biblionumber);
     my ($marcxml) = $self->sth_marcxml->fetchrow;
     my $record = MARC::Moose::Record::new_from($marcxml, 'marcxml');
 
+    # Construct item fields
     $self->sth_item->execute($biblionumber);
     while ( my $item = $self->sth_item->fetchrow_hashref ) {
         my $imarc = Item2Marc($item, $biblionumber);
@@ -107,7 +121,9 @@ override 'process' => sub {
             subf => [ $field->subfields ]);
         $record->append($f);
     }
-    #say $record->as('Text');
+
+    # Specific conversion
+    $record = $self->convert->($record);
 
     $self->writer->write($record);
     return super();
@@ -143,14 +159,10 @@ no Moose;
 __PACKAGE__->meta->make_immutable;
 
 __END__
+
 =pod
 
 =HEAD1 SYNOPSIS
-
- my $task = Koha::Contrib::Tamil->new( 
-    url => 'http://opac.mylibrary.org',
-    verbose => 1 );
- $task->run();
 
 =cut
 
