@@ -1,5 +1,11 @@
 Revision history for Perl module Koha::Contrib::Tamil
 
+0.032 2013-01-03
+
+  - Indexing bug when IncludeSeeFromInSearches enabled--When
+    IncludeSeeFromInSearches in enabled, items are not embedded in biblio
+    records. Fix it.
+
 0.031 2013-07-10
 
   - Improve koha-dump-biblio
