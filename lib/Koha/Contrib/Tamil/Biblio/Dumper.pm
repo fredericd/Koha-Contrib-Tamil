@@ -69,8 +69,9 @@ before 'run' => sub {
             if @$branches;
     }
     unless ($query) {
-        $query = "SELECT DISTINCT biblionumber FROM items";
-        $query = "$query WHERE $where" if $where;
+        $query = $where
+                 ? "SELECT DISTINCT biblionumber FROM items WHERE $where"
+                 : "SELECT biblionumber FROM biblioitems";
     }
     #say $query;
     my $sth = $self->koha->dbh->prepare($query);
