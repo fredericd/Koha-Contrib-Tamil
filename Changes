@@ -1,5 +1,10 @@
 Revision history for Perl module Koha::Contrib::Tamil
 
+0.033 2014-06-20
+
+  - Fix a bug preventing koha-dump-biblio to export biblio records without
+    items, when neither branches nor a query was provided.
+
 0.032 2013-01-03
 
   - Indexing bug when IncludeSeeFromInSearches enabled--When
