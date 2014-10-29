@@ -1,5 +1,9 @@
 Revision history for Perl module Koha::Contrib::Tamil
 
+0.034 2014-10-29
+
+  - Improve doc
+
 0.033 2014-06-20
 
   - Fix a bug preventing koha-dump-biblio to export biblio records without

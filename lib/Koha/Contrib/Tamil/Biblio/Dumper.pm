@@ -16,6 +16,11 @@ use C4::Items;
 use Locale::TextDomain 'Koha-Contrib-Tamil';
 
 
+=attr file
+
+Name of the file in which biblio records are exported. By default C<dump.mrc>.
+
+=cut
 has file => ( is => 'rw', isa => 'Str', default => 'dump.mrc' );
 
 has branches => (
@@ -24,9 +29,22 @@ has branches => (
     default => sub { [] }
 );
 
-# Optional query to select biblio records to dump
+
+=attr query
+
+Optional query to select biblio records to dump. The query must return a list
+of biblio records C<biblionumber>. For example: C<SELECT biblionumber FROM
+biblio WHERE biblionumber BETWEEN 1 AND 100>.
+
+=cut
 has query => ( is => 'rw', isa => 'Str', default => '' );
 
+=attr convert
+
+A function which take in parameter a L<MARC::Moose::Record> biblio record, and
+returns a converted record.
+
+=cut
 has convert => (
     is => 'rw',
     default => sub { sub {
@@ -34,6 +52,13 @@ has convert => (
     } },
 );
 
+=attr formater
+
+Type of formater used to write in L<file> file. Default value is C<marcxml>.
+Available values are: C<iso2709>, C<marcxml>, C<text>, C<json>, C<yaml>,
+C<json>.
+
+=cut
 has formater => (
     is => 'rw',
     isa => 'Str',
@@ -46,6 +71,11 @@ has koha => (
     required => 0,
 );
 
+=attr verbose
+
+Verbosity. By default 0 (false).
+
+=cut
 has verbose => ( is => 'rw', isa => 'Bool', default => 0 );
 
 has sth => ( is => 'rw' );
@@ -161,11 +191,27 @@ __PACKAGE__->meta->make_immutable;
 
 __END__
 
+1;
+
 =pod
 
-=HEAD1 SYNOPSIS
+=head1 SYNOPSIS
+
+ my $converter = sub {
+     # Delete some fields
+     $record->fields(
+         [ grep { $_->tag !~ /012|014|071|099/ } @{$record->fields} ] );
+     return $record;
+ };
+ my $dumper = Koha::Contrib::Tamil::Biblio::Dumper->new(
+     file     => 'biblio.mrc',
+     branches => [ qw/ MAIN ANNEX / ],
+     query    => "SELECT biblionumber FROM biblio WHERE datecreated LIKE '2014-11%'"
+     convert  => $converter,
+     formater => 'iso2709',
+     verbose  => 1,
+ );
+ $dumper->run();
 
 =cut
-
-1;
 
