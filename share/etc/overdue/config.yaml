@@ -1,33 +1,27 @@
 ---
 dirs:
-  print: /home/tamil/client/XXX/kohaclone/koha-tmpl/overdue
-  template: /home/tamil/client/XXX/etc/overdue
+  print: /home/tamil/client/sevran/kohaclone/koha-tmpl/relances
+  template: /home/tamil/client/sevran/etc/overdue
 cycles:
-  - branch: '*'
-    type: '*'
-    from: 14
-    to: 20
-    title: Claim 1
+  - title: Claim 1
     claims:
       - type: email
         template: email/claim1.tx
       - type: print
         template: print/claim1.tx
-  - branch: '*'
-    type: '*'
-    from: 21
-    to: 26
-    title: Claim 2
+    # Available fields: day (number of overdue days), borrower.branch,
+    # borrower.category, item.home, item.holding, item.type, item.ccode,
+    # biblio.type
+    criteria: 'day >= 14 && day <= 20 && borrower.category ne "PRO"'
+  - title: Claim 2
     claims:
       - type: email
         template: email/claim2.tx
       - type: print
         template: print/claim2.tx
-  - branch: '*'
-    type: '*'
-    from: 27
-    to: 89
-    title: Claim 3
+    criteria: 'day >= 21 && day <= 26 && borrower.category ne "PRO"'
+  - title: Claim 3
     claims:
       - type: print
         template: print/claim3.tx
+    criteria: 'day >= 27 && day <99 && borrower.category ne "PRO"'

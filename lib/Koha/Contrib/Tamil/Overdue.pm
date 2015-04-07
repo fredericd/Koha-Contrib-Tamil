@@ -70,12 +70,11 @@ sub claim {
     # On the claim, branch info come from borrower home branch
     my $dbh = C4::Context->dbh();
     my $sth = $dbh->prepare("
-        SELECT borrowers.*, branches.*, categories.*
-          FROM borrowers, branches, categories
-         WHERE borrowers.borrowernumber = ?
-           AND categories.categorycode = borrowers.categorycode
-           AND branches.branchcode = borrowers.branchcode
-        ");
+        SELECT *
+          FROM borrowers
+     LEFT JOIN branches USING(branchcode)
+     LEFT JOIN categories USING(categorycode)
+         WHERE borrowernumber=?" );
     $sth->execute($borrowernumber);
     my $borr = $sth->fetchrow_hashref;
     $borr->{$_} ||= '' for qw/ firstname surname /;
@@ -160,6 +159,18 @@ sub handle_borrower {
 }
  
 
+my @fnames = qw/
+    day
+    borrower.category
+    borrower.branch
+    item.home
+    item.holding
+    item.type
+    item.ccode
+    biblio.type
+/;
+
+
 =method process 
 
 Process all overdues
@@ -170,42 +181,53 @@ sub process {
     my $dbh = C4::Context->dbh();
     my $sth = $dbh->prepare("
         SELECT borrowers.borrowernumber,
-               email,
                issues.itemnumber,
-               borrowers.branchcode,
-               itype,
-               TO_DAYS(NOW())-TO_DAYS(date_due) AS day
-          FROM issues, borrowers, items
+               TO_DAYS(NOW())-TO_DAYS(date_due) AS day,
+               borrowers.branchcode   AS 'borrower.branch',
+               borrowers.categorycode AS 'borrower.category',
+               homebranch             AS 'item.home',
+               holdingbranch          AS 'item.holding',
+               itype                  AS 'item.type',
+               items.ccode            AS 'item.ccode',
+               itemtype               AS 'biblio.type'
+          FROM issues
+     LEFT JOIN borrowers USING(borrowernumber)
+     LEFT JOIN items USING(itemnumber)
+     LEFT JOIN biblioitems ON biblioitems.biblionumber = items.biblionumber
          WHERE date_due < NOW()
-           AND borrowers.borrowernumber = issues.borrowernumber
-           AND items.itemnumber = issues.itemnumber
       ORDER BY surname, firstname
     ");
     $sth->execute;
     my $borrower = { borrowernumber => 0 };
     my @cycles = @{$self->c->{cycles}};
-    while ( my ($borrowernumber, $email, $itemnumber, $branch, $type, $day)
-            = $sth->fetchrow )
-    {
+    while ( my $issue = $sth->fetchrow_hashref ) {
         my $icycle = 0;
+        my $match;
         while ( $icycle < @cycles ) {
-            $_ = $cycles[$icycle];
-            last if 
-                ($_->{branch} eq $branch || $_->{branch} eq '*') &&
-                ($_->{type} eq $type || $_->{type} eq '*')       &&
-                ($day >= $_->{from} && $day <= $_->{to});
+            my $cycle = $cycles[$icycle];
+            my $criteria = $cycle->{criteria};
+            my $code = $criteria;
+            $code =~ s/$_/\$issue->{'$_'}/g for @fnames;
+            $code = "\$match = $code";
+            eval($code);
+            if ( $@ ) {
+                say "Wrong citeria:\n  $criteria\n  $code";
+                warn();
+                exit;
+            }
+            last if $match;
             $icycle++;
         }
-        next if $icycle == @cycles;
-        if ( $borrowernumber != $borrower->{borrowernumber} ) {
-            $self->handle_borrower( $borrower );
-            $borrower = { borrowernumber => $borrowernumber, cycles => {} };
+        next unless $match;
+        if ( $issue->{borrowernumber} != $borrower->{borrowernumber} ) {
+            $self->handle_borrower($borrower);
+            $borrower = { borrowernumber => $issue->{borrowernumber}, cycles => {} };
         }
         my $cycles = $borrower->{cycles};
         my $items = $cycles->{$icycle} ||= [];
-        push @$items, $itemnumber;
+        push @$items, $issue->{itemnumber};
     }
-    $self->handle_borrower( $borrower );
+    $self->handle_borrower($borrower);
 }
 
 
@@ -216,10 +238,11 @@ have been added the last hour.
 
 =cut
 sub clear {
-    my $sql = "DELETE FROM message_queue
-                WHERE status = 'pending'
-                  AND message_transport_type IN ('email','print')
-                  AND time_queued >= DATE_SUB(now(), interval 1 HOUR) ";
+    my $sql =
+        "DELETE FROM message_queue
+          WHERE status = 'pending'
+            AND message_transport_type IN ('email','print')
+            AND time_queued >= DATE_SUB(now(), interval 1 HOUR) ";
     C4::Context->dbh->do($sql)
 }
 

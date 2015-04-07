@@ -1,9 +1,10 @@
 Revision history for Perl module Koha::Contrib::Tamil
 
-0.035 2015-04-06
+0.036 2015-04-07
 
   - Add a script koha-overdue to process overdues, send them by email, and or
-    print them. Uses Text::Xslate templating engine.
+    print them. Uses Text::Xslate templating engine. Allow complex matching
+    criteria.
 
 0.034 2014-10-29
 
