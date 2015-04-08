@@ -1,7 +1,11 @@
 ---
 dirs:
-  print: /home/tamil/client/sevran/kohaclone/koha-tmpl/relances
-  template: /home/tamil/client/sevran/etc/overdue
+  print: /home/tamil/client/XXX/kohaclone/koha-tmpl/claims
+  template: /home/tamil/client/XXX/etc/overdue
+date:
+  locale: en_US
+  now: %A %e %B %Y
+  due: %x
 cycles:
   - title: Claim 1
     claims:

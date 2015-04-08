@@ -42,8 +42,8 @@ has now => (
     isa => 'Str',
     default => sub {
         my $self = shift;
-        DateTime->DefaultLocale($ENV{LANG});
-        my $d = DateTime->now()->strftime("%A %e %B %Y");
+        DateTime->DefaultLocale( $self->c->{date}->{locale} );
+        my $d = DateTime->now()->strftime( $self->c->{date}->{now} );
         $d =~ s/  / /g;
         return $d;
     }
@@ -85,29 +85,64 @@ sub claim {
 
     my $sql = "
         SELECT items.*,
-               itemtypes.*,
-               branches.branchname AS item_branch,
-               biblio.*,
-               biblioitems.*,
-               issues.date_due,
-               issues.issuedate,
-               TO_DAYS(NOW())-TO_DAYS(date_due) AS overdue_days
-          FROM issues, items, itemtypes, branches, biblio, biblioitems
-         WHERE issues.itemnumber IN (" . join(',', @$items) . ")
-           AND items.itemnumber = issues.itemnumber
-           AND itemtypes.itemtype = items.itype
-           AND branches.branchcode = items.holdingbranch
-           AND biblio.biblionumber = items.biblionumber
-           AND biblioitems.biblionumber = items.biblionumber";
+               itemtypes.description  AS 'type.description',
+               holding.branchname     AS 'holding.name',
+               holding.branchaddress1 AS 'holding.address1',
+               holding.branchaddress2 AS 'holding.address2',
+               holding.branchaddress3 AS 'holding.address3',
+               holding.branchzip      AS 'holding.zip',
+               holding.branchcity     AS 'holding.city',
+               holding.branchstate    AS 'holding.state',
+               holding.branchcountry  AS 'holding.country',
+               holding.branchphone    AS 'holding.phone',
+               holding.branchemail    AS 'holding.email',
+               holding.branchurl      AS 'holding.url',
+               home.branchname        AS 'home.name',
+               home.branchaddress1    AS 'home.address1',
+               home.branchaddress2    AS 'home.address2',
+               home.branchaddress3    AS 'home.address3',
+               home.branchzip         AS 'home.zip',
+               home.branchcity        AS 'home.city',
+               home.branchstate       AS 'home.state',
+               home.branchcountry     AS 'home.country',
+               home.branchphone       AS 'home.phone',
+               home.branchemail       AS 'home.email',
+               home.branchurl         AS 'home.url',
+               biblio.author          AS 'biblio.author',
+               biblio.title           AS 'biblio.title',
+               biblio.unititle        AS 'biblio.unititle',
+               biblio.notes           AS 'biblio.notes',
+               biblioitems.volume     AS 'biblio.volume',
+               biblioitems.number     AS 'biblio.number',
+               biblioitems.itemtype   AS 'biblio.type',
+               biblioitems.isbn       AS 'biblio.isbn',
+               biblioitems.lccn       AS 'biblio.lccn',
+               issues.date_due        AS 'issue.date_due',
+               issues.issuedate       AS 'issue.issuedate',
+               TO_DAYS(NOW())-TO_DAYS(date_due) AS 'issue.overdue_days'
+          FROM issues
+     LEFT JOIN items USING(itemnumber)
+     LEFT JOIN itemtypes ON itemtypes.itemtype = items.itype
+     LEFT JOIN branches AS holding ON holding.branchcode = items.holdingbranch
+     LEFT JOIN branches AS home ON home.branchcode = items.homebranch
+     LEFT JOIN biblio USING(biblionumber)
+     LEFT JOIN biblioitems USING(biblionumber)
+         WHERE issues.itemnumber IN (" . join(',', @$items) . ")";
     $sth = $dbh->prepare($sql);
     $sth->execute;
     my $context = { now => $self->now, borrower => $borr };
     my $i = $context->{items} = [];
-    while ( my $issue = $sth->fetchrow_hashref ) {
-        my $d = $issue->{date_due};
-        $d = substr($d, 8, 2) . '-' . substr($d, 5, 2) . '-' . substr($d, 0, 4);
-        $issue->{date_due} = $d;
-        push @$i, $issue;
+    my $strftime = $self->c->{date}->{due};
+    while ( my $item = $sth->fetchrow_hashref ) {
+        for my $name ( ('issue.date_due', 'issue.issuedate') ) {
+            my $d = $item->{$name};
+            $d = DateTime->new(
+                year  => substr($d, 0, 4),
+                month => substr($d, 5, 2),
+                day   => substr($d, 8, 2) );
+            $item->{$name} = $d->strftime($strftime);
+        }
+        push @$i, $item;
     }
 
     for my $claim ( @{$cycle->{claims}} ) {
