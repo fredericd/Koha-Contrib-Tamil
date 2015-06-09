@@ -81,7 +81,7 @@ sub BUILD {
     $self->itemtag($itemtag);
 
     # Koha version => items extraction if >= 3.4
-    my $version = C4::Context::KOHAVERSION();
+    my $version = C4::Context->preference('Version');
     $self->itemsextraction( $version ge '3.04' );
 
     if ( $version ge '3.09' && $self->source =~ /biblio/i &&

@@ -1,5 +1,10 @@
 Revision history for Perl module Koha::Contrib::Tamil
 
+0.038 2015-06-09
+
+  - Indexing bug with 3.20: Koha version is not retrieved anymore with
+    KOHAVERSION()
+
 0.037 2015-04-08
 
   - Paramatrized date format. Get item branch home/holding.
