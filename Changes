@@ -1,5 +1,9 @@
 Revision history for Perl module Koha::Contrib::Tamil
 
+0.039 2015-06-25
+
+  - koha-dump-biblio: fix empty biblio record exporting
+
 0.038 2015-06-09
 
   - Indexing bug with 3.20: Koha version is not retrieved anymore with

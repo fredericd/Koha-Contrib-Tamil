@@ -192,6 +192,7 @@ sub claim_all_overdues {
     while ( my ($borrowernumber, $itemnumber, $branch, $itype, $day)
             = $sth->fetchrow )
     {
+        $itype ||= '';
         #say "borrowernumber = $borrowernumber";
         #say "day = $day";
         my $rule = $self->rule->{"$branch-$itype-$day"} ||

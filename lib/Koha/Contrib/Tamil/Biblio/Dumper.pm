@@ -156,7 +156,7 @@ override 'process' => sub {
     # Specific conversion
     $record = $self->convert->($record);
 
-    $self->writer->write($record);
+    $self->writer->write($record) if $record;
     return super();
 };
 
