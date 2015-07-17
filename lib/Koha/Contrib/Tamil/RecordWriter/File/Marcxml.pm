@@ -24,7 +24,13 @@ sub begin {
     my $self = shift;
     if ( $self->valid ) {
         my $fh = $self->fh;
-        print $fh '<?xml version="1.0" encoding="UTF-8"?>', "\n", '<collection>', "\n";
+        print $fh <<EOS;
+<collection
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.loc.gov/MARC21/slim
+http://www.loc.gov/standards/marcxml/schema/MARC21slim.xsd"
+  xmlns="http://www.loc.gov/MARC21/slim">
+EOS
     }
 }
 
@@ -51,7 +57,10 @@ sub write {
     my $fh  = $self->fh;
     my $xml = ref($record) eq 'MARC::Record'
               ? $record->as_xml_record() : $record;
-    $xml =~ s/<\?xml version="1.0" encoding="UTF-8"\?>\n//g if $self->valid;
+    if ( $self->valid ) {
+        $xml =~ /<record.+?(<.*)<\/record>/s;
+        $xml = "<record>\n$1</record>\n" if $1;
+    }
     print $fh $xml;
 }
 

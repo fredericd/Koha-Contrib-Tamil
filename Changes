@@ -1,5 +1,9 @@
 Revision history for Perl module Koha::Contrib::Tamil
 
+0.040 2015-06-17
+
+  - Biblio/authority records are normalized before beeing exported for indexing
+
 0.039 2015-06-25
 
   - koha-dump-biblio: fix empty biblio record exporting
