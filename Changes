@@ -1,5 +1,9 @@
 Revision history for Perl module Koha::Contrib::Tamil
 
+0.041 2015-10-14
+
+  - Improve overdue processing. Give access to guarator info.
+
 0.040 2015-06-17
 
   - Biblio/authority records are normalized before beeing exported for indexing

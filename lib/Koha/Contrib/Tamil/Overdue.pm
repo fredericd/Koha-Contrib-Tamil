@@ -83,6 +83,23 @@ sub claim {
     # Skip issue from borrower of specific category
     return unless $borr->{overduenoticerequired};
 
+    my $context = {
+        now => $self->now,
+        borrower => $borr,
+    };
+    if ( my $id = $borr->{guarantorid} ) {
+        $sth = $dbh->prepare("
+            SELECT *
+              FROM borrowers
+         LEFT JOIN branches USING(branchcode)
+         LEFT JOIN categories USING(categorycode)
+             WHERE borrowernumber=?" );
+        $sth->execute($id);
+        if ( my $g = $sth->fetchrow_hashref ) {
+            $g->{$_} ||= '' for qw/ firstname surname /;
+            $context->{guarantor} = $g;
+        }
+    }
     my $sql = "
         SELECT items.*,
                itemtypes.description  AS 'type.description',
@@ -130,7 +147,6 @@ sub claim {
          WHERE issues.itemnumber IN (" . join(',', @$items) . ")";
     $sth = $dbh->prepare($sql);
     $sth->execute;
-    my $context = { now => $self->now, borrower => $borr };
     my $i = $context->{items} = [];
     my $strftime = $self->c->{date}->{due};
     while ( my $item = $sth->fetchrow_hashref ) {
