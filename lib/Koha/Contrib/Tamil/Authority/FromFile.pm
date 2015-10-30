@@ -121,7 +121,9 @@ has replaced => (
 
 my $c;
 my %authdef;
-{
+my $authdef_perid = {};
+
+sub BUILD {
     my $file = 'config.yaml';
     unless ( -e $file) {
         say "Configuration file doesn't exist: $file";
@@ -142,10 +144,9 @@ my %authdef;
         $tag = [ $tag ] if ref $tag ne 'ARRAY';
         $authdef{$_} = $def  for @$tag;
     }
-}
-my $authdef_perid = {};
-for (values %authdef) {
-    $authdef_perid->{$_->{id}} = $_;
+    for (values %authdef) {
+        $authdef_perid->{$_->{id}} = $_;
+    }
 }
 
 
