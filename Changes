@@ -1,5 +1,9 @@
 Revision history for Perl module Koha::Contrib::Tamil
 
+0.043 2016-01-15
+
+  - Fix shipped Marc21 authoritization configuration file.
+
 0.042 2015-10-30
 
   - Authoritization of an ISO2709 file
