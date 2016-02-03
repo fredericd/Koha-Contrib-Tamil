@@ -4,7 +4,6 @@ package Koha::Contrib::Tamil::Logger;
 
 use Moose;
 use Modern::Perl;
-use utf8;
 use FindBin qw( $Bin );
 use Log::Dispatch;
 use Log::Dispatch::Screen;
@@ -15,7 +14,7 @@ use Log::Dispatch::File;
 has log_filename => (
     is => 'rw',
     isa => 'Str',
-    default => "./koha-contri-tamil.log",
+    default => "./koha-contrib-tamil.log",
 );
 
 has log => (
@@ -33,7 +32,6 @@ has log => (
             name      => 'file1',
             min_level => 'debug',
             filename  => $self->log_filename, 
-            binmode   => ':encoding(UTF-8)',
         ) );
         return $log;
     }
