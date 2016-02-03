@@ -5,10 +5,7 @@ package Main;
 # PODNAME: koha-cloud
 # ABSTRACT: Creates HTML keywords clouds from Koha Zebra Indexes
 
-use 5.010;
-use utf8;
-use strict;
-use warnings;
+use Modern::Perl;
 use Carp;
 use YAML::Syck;
 use Pod::Usage;
@@ -18,9 +15,7 @@ use Koha::Contrib::Tamil::Koha;
 use Koha::Contrib::Tamil::Zebra::Clouder;
 
 
-my $verbose     = 0;
-my $help        = 0;
-my $conf        = '';
+my ($verbose, $help, $conf) = (0, 0, '');
 GetOptions( 
     'verbose'   => \$verbose,
     'help'      => \$help,
@@ -36,9 +31,8 @@ sub usage {
 sub run() {
     usage() if $help || !$conf;          
     
-    
     my @clouds;
-    print "Reading configuration file: $conf\n" if $verbose;
+    say "Reading configuration file: $conf" if $verbose;
     eval {
         @clouds = LoadFile( $conf );
     };
@@ -77,7 +71,6 @@ sub run() {
         print $fh $clouder->html_cloud( $cloud->{KohaIndex}, $withcss );
         close $fh;
     }
-    
 }
 
 
@@ -170,14 +163,5 @@ Now terms are outputted in the lexical order. They could be sorted by their
 weight.
 
 =back
-
-=head1 COPYRIGHT AND LICENSE
-
-Copyright 2009 by Tamil, s.a.r.l.
-
-L<http://www.tamil.fr>
-
-This library is free software; you can redistribute it and/or modify
-it under the same terms as Perl itself.
 
 =cut
