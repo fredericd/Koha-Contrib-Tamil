@@ -1,5 +1,10 @@
 Revision history for Perl module Koha::Contrib::Tamil
 
+0.044 2016-02-03
+
+  - Fix file logger encoding + default file name
+  - Fix doc
+
 0.043 2016-01-15
 
   - Fix shipped Marc21 authoritization configuration file.
