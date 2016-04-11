@@ -186,6 +186,10 @@ sub get_biblio_xml {
                 substr($itemsxml, index($itemsxml, "</leader>\n", 0) + 10);
         }
     }
+    if ( C4::Context->preference('Frantiq') ) {
+        require Frantiq::Pactol::BiblioNormalizer;
+        $marcxml = Frantiq::Pactol::BiblioNormalizer::process($marcxml);
+    }
     return $marcxml;
 }
 

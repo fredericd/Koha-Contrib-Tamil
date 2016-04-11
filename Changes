@@ -1,5 +1,9 @@
 Revision history for Perl module Koha::Contrib::Tamil
 
+0.045 2016-04-11
+
+  - Special indexing
+
 0.044 2016-02-03
 
   - Fix file logger encoding + default file name
