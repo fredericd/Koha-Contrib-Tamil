@@ -59,7 +59,9 @@ sub create_json_data {
         $isbn = $isbn->isbn;
         my $title = $record->field($tag->{title});
         next unless $title;
-        $title = $title->subfield('a');
+        $title = $is_unimarc
+            ? $title->subfield('a')
+            : join(' ', map { $_->[1] } @{$title->subf});
         $record_per_isbn{$isbn} = [ $biblionumber, $title ];
     }
 
