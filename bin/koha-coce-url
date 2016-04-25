@@ -3,8 +3,8 @@
 
 
 package Main;
-# PODNAME: koha-newacqs
-# ABSTRACT: Generate a JSON structure of new acquisions
+# PODNAME: koha-coce-url
+# ABSTRACT: Generate a JSON structure of Cover url via Coce
 
 use Modern::Perl;
 use utf8;
@@ -97,11 +97,11 @@ create_json_data(@ARGV);
 
 =head1 SYNOPSYS
 
- koha-newacqs 10 http:://coce.server 300
+ koha-coce-url "select biblionumber from biblio limit 100" 10 http:://coce.server 300
 
 =head1 DESCRIPTION
 
-This script generate a JSON array of new acquisition, that looks like this:
+This script generate a JSON array of Cover URLs for biblio records. For example:
 
  [
   [
@@ -142,8 +142,6 @@ Address of a Coce server.
 =item *
 
 Size of images
-
-=back
 
 =back
 
