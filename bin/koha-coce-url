@@ -1,8 +1,5 @@
 #!/usr/bin/perl
 
-
-
-package Main;
 # PODNAME: koha-coce-url
 # ABSTRACT: Generate a JSON structure of Cover url via Coce
 
@@ -94,6 +91,10 @@ sub create_json_data {
 
 usage() unless @ARGV == 3;
 create_json_data(@ARGV);
+
+=pod
+
+=encoding utf8
 
 =head1 SYNOPSYS
 

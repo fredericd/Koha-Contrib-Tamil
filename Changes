@@ -1,5 +1,9 @@
 Revision history for Perl module Koha::Contrib::Tamil
 
+0.047 2016-04-25
+
+  - koha-coce-url new script
+
 0.046 2016-04-11
 
   - Special indexing
