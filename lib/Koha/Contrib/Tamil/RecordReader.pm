@@ -188,7 +188,7 @@ sub get_biblio_xml {
     }
     if ( C4::Context->preference('Frantiq') ) {
         require Frantiq::Pactol::BiblioNormalizer;
-        $marcxml = Frantiq::Pactol::BiblioNormalizer::process($marcxml);
+        Frantiq::Pactol::BiblioNormalizer::process(\$marcxml);
     }
     return $marcxml;
 }
