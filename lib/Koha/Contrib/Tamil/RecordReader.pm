@@ -82,7 +82,8 @@ sub BUILD {
 
     # Koha version => items extraction if >= 3.4
     my $version = C4::Context->preference('Version');
-    $self->itemsextraction( $version ge '3.04' );
+    $self->itemsextraction(
+        $version =~ /^3/ && $version ge '3.04' || $version =~ /^[0-9]{2}/ ? 1 : 0 );
 
     if ( $version ge '3.09' && $self->source =~ /biblio/i &&
          C4::Context->preference('IncludeSeeFromInSearches') )

@@ -1,5 +1,9 @@
 Revision history for Perl module Koha::Contrib::Tamil
 
+0.049 2016-09-28
+
+  - Indexing for version >= 16.05
+
 0.048 2016-05-04
 
   - Follow-up for special indexing
