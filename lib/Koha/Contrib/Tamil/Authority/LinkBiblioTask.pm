@@ -141,7 +141,9 @@ sub process {
         }
     }
     return 1 if !$self->doit || !$modified;
-    ModBiblio( $record, $self->reader->id );
+
+    my $framework_code = C4::Biblio::GetFrameworkCode( $self->reader->id );
+    ModBiblio( $record, $self->reader->id, $framework_code );
 
     return 1;
 }
