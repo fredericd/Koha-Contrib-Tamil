@@ -2,6 +2,10 @@
 
 package Main;
 
+# PODNAME: koha-overdue
+# ABSTRACT: Claim overdues each day, grouping same overdues
+
+
 use Modern::Perl;
 use Koha::Contrib::Tamil::Overdue;
 use Pod::Usage;
