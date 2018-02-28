@@ -3,6 +3,7 @@ package Koha::Contrib::Tamil::Koha;
 
 use Moose;
 
+use Modern::Perl;
 use Carp;
 use XML::Simple;
 use DBI;
@@ -10,6 +11,7 @@ use ZOOM;
 use MARC::Record;
 use MARC::File::XML;
 use YAML;
+use C4::Biblio;
 
 
 =attr conf_file
@@ -43,6 +45,9 @@ has conf => ( is => 'rw' );
 has _zconn => ( is => 'rw', isa => 'HashRef' );
 
 
+has _old_marc_biblio_sub => ( is => 'rw', isa => 'Bool', default => 0 );
+
+
 sub BUILD {
     my $self = shift;
 
@@ -73,6 +78,13 @@ sub BUILD {
 
     # Zebra connections 
     $self->_zconn( { biblio => undef, auth => undef } );
+
+    my $version = C4::Context->preference('Version');
+    if ( $version =~ /^([0-9]{2})\.([0-9]{2})/ ) {
+        $version = "$1.$2";
+        $version += 0;
+        $self->_old_marc_biblio_sub(1) if $version <= 17.05;
+    }
 }
 
 
@@ -193,6 +205,23 @@ s/[^\x09\x0A\x0D\x{0020}-\x{D7FF}\x{E000}-\x{FFFD}\x{10000}-\x{10FFFF}]//g;
         return $record;
     }   
     return;
+}
+
+
+=method get_biblio($biblionumber)
+
+Return a MARC::Moose::Record from its biblionumber. It's a wrapper around GetMarcBiblio()
+
+=cut
+
+sub get_biblio {
+    my ( $self, $id ) = @_; 
+
+    my $record = $self->_old_marc_biblio_sub
+        ? GetMarcBiblio($id)
+        : GetMarcBiblio({biblionumber => $id});
+    return unless $record;
+    return MARC::Moose::Record::new_from($record, 'Legacy');
 }
 
 

@@ -6,6 +6,7 @@
 use Modern::Perl;
 use utf8;
 use Pod::Usage;
+use Koha::Contrib::Tamil::Koha;
 use C4::Context;
 use C4::Biblio;
 use MARC::Moose::Record;
@@ -26,6 +27,8 @@ sub usage {
 } 
 
 
+
+
 sub create_json_data {
     my ($query, $coce) = @_;
 
@@ -40,11 +43,11 @@ sub create_json_data {
         title => $is_unimarc ? '200' : '245',
     };
 
+    my $koha = Koha::Contrib::Tamil::Koha->new();
+
     my %record_per_isbn;
     for my $biblionumber (@bibs) {
-        my $record = GetMarcBiblio($biblionumber);
-        next unless $record;
-        $record = MARC::Moose::Record::new_from($record, 'Legacy');
+        my $record = $koha->get_biblio($biblionumber);
         my $field = $record->field($tag->{isbn});
         next unless $field;
         my $isbn = $field->subfield('a');
@@ -148,7 +151,7 @@ Size of images
 
 =head1 COPYRIGHT AND LICENSE
 
-Copyright 2017 by Tamil, s.a.r.l.
+Copyright 2018 by Tamil, s.a.r.l.
 
 L<http://www.tamil.fr>
 
