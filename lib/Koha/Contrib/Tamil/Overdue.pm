@@ -40,18 +40,16 @@ has tx => ( is => 'rw', isa => 'Text::Xslate' );
 has now => (
     is => 'rw',
     isa => 'Str',
-    default => sub {
-        my $self = shift;
-        DateTime->DefaultLocale( $self->c->{date}->{locale} );
-        my $d = DateTime->now()->strftime( $self->c->{date}->{now} );
-        $d =~ s/  / /g;
-        return $d;
-    }
 );
 
 
 sub BUILD {
     my $self = shift;
+
+    DateTime->DefaultLocale( $self->c->{date}->{locale} );
+    my $d = DateTime->now()->strftime( $self->c->{date}->{now} );
+    $d =~ s/  / /g;
+    $self->now( $d );
 
     $self->tx( Text::Xslate->new(
         path => $self->c->{dirs}->{template},
