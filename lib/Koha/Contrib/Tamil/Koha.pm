@@ -12,6 +12,7 @@ use MARC::Record;
 use MARC::File::XML;
 use YAML;
 use C4::Biblio;
+use MARC::Moose::Record;
 
 
 =attr conf_file

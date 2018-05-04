@@ -1,0 +1,142 @@
+#!/usr/bin/perl
+
+package Main;
+
+# PODNAME: koha-ark
+# ABSTRACT: Manage ARK identified in a Koha Catalog
+
+use Modern::Perl;
+use Pod::Usage;
+use Getopt::Long;
+use Koha::Contrib::Tamil::ARK;
+
+binmode(STDOUT, ':encoding(UTF8)');
+
+my ($help, $verbose, $doit) = (0, 0, 0);
+GetOptions( 
+    'verbose|v' => \$verbose,
+    'doit'      => \$doit,
+    'help|h'    => \$help,
+);
+
+sub usage {
+    pod2usage( -verbose => 2 );
+    exit;
+} 
+
+
+usage() if $help || @ARGV != 1;
+
+my $cmd = shift @ARGV;
+
+my $ark = Koha::Contrib::Tamil::ARK->new(
+    verbose => $verbose,
+    doit    => $doit,
+);
+if ( $cmd eq 'clear' ) {
+    $ark->clear();
+}
+elsif ( $cmd eq 'update' ) {
+    $ark->update();
+}
+else {
+    usage();
+}
+
+
+=pod
+
+=encoding utf8
+
+=head1 SYNOPSYS
+
+ koha-ark clear --doit
+ koha-ark update --verbose --doit
+
+=head1 USAGE
+
+=over
+
+=item koha-ark clear|update [--doit] [--verbose] [--help]
+
+=back
+
+=head1 DESCRIPTION
+
+Process biblio record from a Koha Catalog in order to update its ARK
+identifiers. See L<The ARK Identifier
+Scheme|https://tools.ietf.org/id/draft-kunze-ark-15.txt>. The procession is
+driven by ARK_CONF Koha system preference. It's a json variable. For example:
+
+ {
+   "NMHA": "myspecial.institution.fr",
+   "NAAN": "12345",
+   "ARK": "http://{NMHA}/arh:/{NAAN}/idkoha{biblionumber}",
+   "field": "003"
+ }
+
+ARK_CONF system preference must contain 4 variables :
+
+=over
+
+=item *
+
+B<NMHA> — Name Mapping Authority Hostport. Usually it's a hostname, the
+hostname of the Koha system itself, or the hostname of a proxy server (or link
+resolver).
+
+=item *
+
+B<NAAN> — Name Assigning Authority Number. It's a number identifying the
+institution, ie the Library using Koha. This number is provided for example by
+the California Digital Library (CDL),
+
+=item *
+
+B<ARK> — It's a placeholder used to build the ARK. Three variables can be used:
+C<NMHA>, C<NAAN>, and C<biblionumber> (Koha biblio record unique identifier).
+
+=item *
+
+B<field> — The biblio record field used to store the ARK. It could be a control
+or standard field. For example, C<003> or C<099a>.
+
+=back
+
+There are two commands: clear and update
+
+=head2 clear
+
+C<koha-ark clear> clears the ARK field (C<field> variable) in all biblio
+records of the Catalog.
+
+=head2 update
+
+C<koha-ark update> processes all biblio that have an empty ARK field. The ARK
+field is created with the appropriate ARK identifier. The ARK is build based on
+C<ARK> variable from ARK_CONF. For the above ARK_CONF, the biblio record that has
+C<9877> biblionumber will have this in 003 field:
+
+ http://myspecial.institution.fr/ark:/12345/idkoha9877
+
+
+=head1 PARAMETERS
+
+=over
+
+=item B<--doit>
+
+Without this parameter biblio records are not modified in Koha Catalog.
+
+=item B<--verbose|-v>
+
+Enable script verbose mode. Biblio records are displayed before/after
+processing.
+
+=item B<--help|-h>
+
+Print this help page.
+
+=back
+
+=cut
