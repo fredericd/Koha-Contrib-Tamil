@@ -3,7 +3,7 @@
 package Main;
 
 # PODNAME: koha-ark
-# ABSTRACT: Manage ARK identified in a Koha Catalog
+# ABSTRACT: Manage ARK identifiers in a Koha Catalog
 
 use Modern::Perl;
 use Pod::Usage;
@@ -63,9 +63,9 @@ else {
 
 =head1 DESCRIPTION
 
-Process biblio record from a Koha Catalog in order to update its ARK
+Process biblio records from a Koha Catalog in order to update its ARK
 identifiers. See L<The ARK Identifier
-Scheme|https://tools.ietf.org/id/draft-kunze-ark-15.txt>. The procession is
+Scheme|https://tools.ietf.org/id/draft-kunze-ark-15.txt>. The processing is
 driven by ARK_CONF Koha system preference. It's a json variable. For example:
 
  {
@@ -81,9 +81,8 @@ ARK_CONF system preference must contain 4 variables :
 
 =item *
 
-B<NMHA> — Name Mapping Authority Hostport. Usually it's a hostname, the
-hostname of the Koha system itself, or the hostname of a proxy server (or link
-resolver).
+B<NMHA> — Name Mapping Authority Host. Usually it's a hostname, the hostname of
+the Koha system itself, or the hostname of a proxy server (or link resolver).
 
 =item *
 
@@ -93,8 +92,9 @@ the California Digital Library (CDL),
 
 =item *
 
-B<ARK> — It's a placeholder used to build the ARK. Three variables can be used:
-C<NMHA>, C<NAAN>, and C<biblionumber> (Koha biblio record unique identifier).
+B<ARK> — It's a template used to build the ARK. Three placeholders can be used
+in the template: C<NMHA> and C<NAAN> from ARK_CONF, and C<biblionumber> (Koha
+biblio record unique identifier).
 
 =item *
 
