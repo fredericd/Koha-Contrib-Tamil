@@ -4,6 +4,7 @@ use Moose;
 
 use Modern::Perl;
 use JSON;
+use YAML;
 use C4::Context;
 use C4::Biblio;
 use Try::Tiny;
@@ -26,38 +27,43 @@ has verbose => ( is => 'rw', isa => 'Bool', default => 0 );
 
 has field_query => ( is => 'rw', isa => 'Str' );
 
+sub fatal {
+    say shift;
+    exit;
+}
+
 
 sub BUILD {
     my $self = shift;
 
     my $c = C4::Context->preference("ARK_CONF");
-    unless ($c) {
-        say "ARK_CONF Koha system preference is missing";
-        exit;
-    }
+    fatal("ARK_CONF Koha system preference is missing") unless $c;
+
     try {
         $c = decode_json($c);
     } catch {
-        say "Error while decoding json ARK_CONF preference: $_";
-        exit;
+        fatal("Error while decoding json ARK_CONF preference: $_");
     };
 
-    # Check 'field'
-    my $field_query;
-    if ( my $field = $c->{field} ) {
-        if ( length($field) == 3 && $field =~ /^00[0-9]$/ ) { # controlfield
-            $field_query = "//controlfield[\@tag=$field]";
-        }
-        elsif ( length($field) == 4 && $field =~ /^[0-9]{3}[0-9a-z]/ ) { # datafield
-            my $tag = substr($field, 0, 3);
-            my $letter = substr($field,3);
-            $field_query = "//datafield[\@tag=\"$tag\"]/subfield[\@code=\"$letter\"]";
-        }
+    my $a = $c->{ark};
+    fatal("Invalid ARK_CONF preference: 'ark' variable is missing") unless $a;
+
+    # Check koha fields
+    for my $name ( qw/ id ark / ) {
+        my $field = $a->{koha}->{$name};
+        fatal("Missing: koha.$name") unless $field;
+        fatal("Missing: koha.$name.tag") unless $field->{tag};
+        fatal("Invalid koha.$name.tag") if $field->{tag} !~ /^[0-9]{3}$/;
+        fatal("Missing koha.$name.letter")
+            if $field->{tag} !~ /^00[0-9]$/ && ! $field->{letter};
     }
-    unless ($field_query) {
-        say "Invalid 'field' parameter";
-        exit;
-    }
+
+    my $id = $a->{koha}->{ark};
+    my $field_query =
+        $id->{letter}
+        ? '//datafield[@tag="' . $id->{tag} . '"]/subfield[@code="' .
+          $id->{letter} . '"]'
+        : '//controlfield[@tag="' . $id->{tag} . '"]';
     $field_query = "ExtractValue(metadata, '$field_query')";
     $self->field_query( $field_query );
 
@@ -90,20 +96,15 @@ sub clear {
         FROM biblio_metadata
         WHERE " . $self->field_query . " <> ''
     ";
+    my $ka = $self->c->{ark}->{koha}->{ark};
+    my ($tag, $letter) = ($ka->{tag}, $ka->{letter});
     $self->foreach_biblio({
         query => $query,
         sub => sub {
             my ($biblionumber, $record) = @_;
             say $biblionumber;
             print "BEFORE:\n", $record->as('Text') if $self->verbose;
-            my ($tag, $letter);
-            $tag = $self->c->{field};
-            if ( length($tag) == 3 ) {
-                $record->delete($tag);
-            }
-            else {
-                $letter = substr($tag, 3);
-                $tag = substr($tag, 0, 3);
+            if ( $letter ) {
                 for my $field ( $record->field($tag) ) {
                     my @subf = grep { $_->[0] ne $letter; } @{$field->subf};
                     $field->subf( \@subf );
@@ -111,6 +112,9 @@ sub clear {
                 $record->fields( [ grep {
                     $_->tag eq $tag && @{$_->subf} == 0 ? 0 : 1;
                 } @{ $record->fields } ] );
+            }
+            else {
+                $record->delete($tag);
             }
             print "AFTER:\n", $record->as('Text') if $self->verbose;
         },
@@ -126,36 +130,42 @@ sub update {
         FROM biblio_metadata
         WHERE " . $self->field_query . " = ''
     ";
+    my $a = $self->c->{ark};
     $self->foreach_biblio({
         query => $query,
         sub => sub {
             my ($biblionumber, $record) = @_;
             say $biblionumber;
-            my $ark = $self->c->{ARK};
+            my $ark = $a->{ARK};
             for my $var ( qw/ NMHA NAAN / ) {
-                my $value = $self->c->{$var};
+                my $value = $a->{$var};
                 $ark =~ s/{$var}/$value/;
             }
-            $ark =~ s/{biblionumber}/$biblionumber/;
-            print "BEFORE:\n", $record->as('Text') if $self->verbose;
-            my ($tag, $letter);
-            $tag = $self->c->{field};
-            if ( length($tag) == 3 ) {
-                $record->delete($tag);
-                $record->append( MARC::Moose::Field::Control->new(
-                    tag => $tag,
-                    value => $ark ) );
+            my $kfield = $a->{koha}->{id};
+            my $id = $record->field($kfield->{tag});
+            if ( $id ) {
+                $id = $kfield->{letter}
+                    ? $id->subfield($kfield->{letter})
+                    : $id->value;
             }
-            else {
-                $letter = substr($tag, 3);
-                $tag = substr($tag, 0, 3);
-                for my $field ( $record->field($tag) ) {
-                    my @subf = grep { $_->[0] ne $letter; } @{$field->subf};
+            $id = $biblionumber unless $id;
+            $ark =~ s/{id}/$id/;
+            print "BEFORE:\n", $record->as('Text') if $self->verbose;
+            $kfield = $a->{koha}->{ark};
+            if ( $kfield->{letter} ) {
+                for my $field ( $record->field($kfield->{tag}) ) {
+                    my @subf = grep { $_->[0] ne $kfield->{letter}; } @{$field->subf};
                     $field->subf( \@subf );
                 }
                 $record->fields( [ grep {
-                    $_->tag eq $tag && @{$_->subf} == 0 ? 0 : 1;
+                    $_->tag eq $kfield->{tag} && @{$_->subf} == 0 ? 0 : 1;
                 } @{ $record->fields } ] );
+            }
+            else {
+                $record->delete($kfield->{tag});
+                $record->append( MARC::Moose::Field::Control->new(
+                    tag => $kfield->{tag},
+                    value => $ark ) );
             }
             print "AFTER:\n", $record->as('Text') if $self->verbose;
         },
