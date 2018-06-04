@@ -85,6 +85,10 @@ sub BUILD {
         $version += 0;
         $self->_old_marc_biblio_sub(1) if $version <= 17.05;
     }
+    else {
+        $self->_old_marc_biblio_sub(1);
+    }
+
 }
 
 
