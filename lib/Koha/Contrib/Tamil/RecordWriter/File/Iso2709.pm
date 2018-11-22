@@ -2,7 +2,7 @@ package Koha::Contrib::Tamil::RecordWriter::File::Iso2709;
 #ABSTRACT: ISO2709 MARC records writer
 use Moose;
 
-extends 'Koha::Contrib::Tamil::RecordWriter::File';
+with 'MooseX::RW::Writer::File';
 
 use Carp;
 use MARC::Batch;
