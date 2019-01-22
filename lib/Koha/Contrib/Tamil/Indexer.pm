@@ -103,9 +103,10 @@ sub run {
     }
 
     # DOM indexing? otherwise GRS-1
+    # Par défaut DOM depuis 18.11 avec dispartion des param zebra_bib_index_mode
     my $is_dom = $self->source eq 'biblio' ? 'zebra_bib_index_mode' : 'zebra_auth_index_mode';
     $is_dom = $self->koha->conf->{config}->{$is_dom} || '';
-    $is_dom = $is_dom =~ /dom/i ? 1 : 0;
+    $is_dom = $is_dom =~ /grs/i ? 0 : 1;
 
     # STEP 1.1: Records to update
     print __"Exporting records to update", "\n" if $self->verbose;
