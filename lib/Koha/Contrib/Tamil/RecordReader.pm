@@ -188,10 +188,13 @@ sub get_biblio_xml {
             my $record = MARC::Record->new;
             $record->encoding('UTF-8');
             my @itemsrecord;
+            my $not_onloan_count = 0;
             foreach my $item (@items) {
+                $not_onloan_count++ unless $item->{onloan};
                 my $record = Item2Marc($item, $id);
                 push @itemsrecord, $record->field($self->itemtag);
             }
+            push @itemsrecord, MARC::Field->new('999', ' ', ' ', 'x' => $not_onloan_count);
             $record->insert_fields_ordered(@itemsrecord);
             my $itemsxml = $record->as_xml_record();
             $marcxml =
