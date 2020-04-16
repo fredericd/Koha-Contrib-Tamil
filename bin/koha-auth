@@ -121,6 +121,8 @@ Authorities configuration file looks like that:
  authcode: NP
  authletters: abcd
  authtag: 200
+ ind1: null
+ ind2: 3
  bibliotags: 
    - 700
    - 701

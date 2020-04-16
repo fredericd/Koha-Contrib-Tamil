@@ -112,6 +112,12 @@ sub process {
             $record->leader($leader);
             my $field = MARC::Field->new(
                 $authority->{authtag}, '', '', @subfields);
+            for my $i (1..2) {
+                my $value = $authority->{"ind$i"};
+                next unless $value;
+                next if length($value) == 0 || $value =~ /null/i;
+                $field->set_indicator($i, substr($value,0,1));
+            }
             $record->append_fields($field);
             $self->logger->info( "$authcode: " . $field->as_formatted() . "\n" );
             AddAuthority($record, 0, $authcode) if $self->doit;
