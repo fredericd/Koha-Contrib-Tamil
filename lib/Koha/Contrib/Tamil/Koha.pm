@@ -207,7 +207,7 @@ Return a MARC::Record from its biblionumber
 sub get_biblio_marc {
     my ( $self, $id ) = @_; 
     my $sth = $self->dbh->prepare(
-        "SELECT marcxml FROM biblioitems WHERE biblionumber=? ");
+        "SELECT metadata FROM biblio_metadata WHERE biblionumber=? ");
     $sth->execute( $id );
     my ($marcxml) = $sth->fetchrow;
     return unless $marcxml;
