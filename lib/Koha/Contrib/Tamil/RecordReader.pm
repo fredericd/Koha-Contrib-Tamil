@@ -12,8 +12,8 @@ use Moose::Util::TypeConstraints;
 use MARC::Record;
 use MARC::File::XML;
 use C4::Context;
-use C4::Biblio;
-use C4::Items;
+use C4::Biblio qw/ GetMarcFromKohaField /;
+use C4::Items qw/ Item2Marc /;
 
 
 subtype 'Koha::RecordType'
