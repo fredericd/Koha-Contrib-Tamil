@@ -11,7 +11,7 @@ use ZOOM;
 use MARC::Record;
 use MARC::File::XML;
 use YAML;
-use C4::Biblio;
+use C4::Biblio qw/ GetMarcBiblio /;
 use Search::Elasticsearch;
 
 
