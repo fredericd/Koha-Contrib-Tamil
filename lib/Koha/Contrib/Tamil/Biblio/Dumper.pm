@@ -12,7 +12,7 @@ use MARC::Moose::Record;
 use MARC::Moose::Writer;
 use MARC::Moose::Formater::Iso2709;
 use C4::Biblio;
-use C4::Items;
+use C4::Items qw/ Item2Marc /;
 use Locale::TextDomain 'Koha-Contrib-Tamil';
 
 
