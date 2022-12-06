@@ -27,7 +27,7 @@ has doit => (is=> 'rw', isa => 'Bool', default => 0);
 
 use Carp;
 use C4::Context;
-use C4::AuthoritiesMarc;
+use C4::AuthoritiesMarc qw(AddAuthority);
 use List::Util qw( first );
 
 
