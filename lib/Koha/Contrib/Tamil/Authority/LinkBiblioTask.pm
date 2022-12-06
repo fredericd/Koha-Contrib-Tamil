@@ -10,7 +10,7 @@ use Carp;
 use Koha::Contrib::Tamil::Koha;
 use Koha::Contrib::Tamil::RecordReader;
 use C4::Context;
-use C4::Biblio;
+use C4::Biblio qw(ModBiblio);
 
 has reader => ( is => 'rw', isa => 'Koha::Contrib::Tamil::RecordReader' );
 

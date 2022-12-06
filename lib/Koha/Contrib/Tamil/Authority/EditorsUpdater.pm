@@ -3,7 +3,7 @@ use Moose;
 
 extends 'AnyEvent::Processor';
 
-use C4::AuthoritiesMarc;
+use C4::AuthoritiesMarc qw(AddAuthority);
 
 has verbose => ( is => 'rw', isa => 'Bool' );
 
