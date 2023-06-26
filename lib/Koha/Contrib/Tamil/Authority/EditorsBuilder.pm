@@ -6,7 +6,7 @@ extends 'AnyEvent::Processor';
 use 5.010;
 use utf8;
 use C4::Context;
-use C4::Biblio qw(GetMarcBiblio);
+use C4::Biblio;
 use Business::ISBN;
 use YAML;
 
