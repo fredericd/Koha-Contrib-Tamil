@@ -109,9 +109,7 @@ before 'run' => sub {
     $self->sth($sth);
 
     $self->sth_marcxml( $self->koha->dbh->prepare(
-        $self->koha->_old_marc_biblio_sub
-        ? "SELECT marcxml FROM biblioitems WHERE biblionumber=?"
-        : "SELECT metadata FROM biblio_metadata WHERE biblionumber=?"
+        "SELECT metadata FROM biblio_metadata WHERE biblionumber=?"
     ) );
 
     $query = "SELECT * FROM items WHERE biblionumber=?";
