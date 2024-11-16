@@ -1,0 +1,50 @@
+#!/usr/bin/perl
+
+# PODNAME: koha-unimarc-4xx-fix
+# ABSTRACT: Fix inconsistencies between mother/child biblio records
+
+use Modern::Perl;
+use Pod::Usage;
+use Getopt::Long;
+use Koha::Contrib::Tamil::Unimarc4xx;
+
+
+my ($help)  = (0);
+GetOptions( 
+    'help|h'       => \$help,
+);
+
+
+sub usage {
+    pod2usage( -verbose => 2 );
+    exit;
+} 
+
+
+usage() if $help;          
+
+my $dumper = Koha::Contrib::Tamil::Unimarc4xx->new(
+    action => \@ARGV
+);
+$dumper->run();
+
+
+=head1 NAME
+
+koha-unimarc-4xx-fix - Fix inconsitencies between mother/child biblio records.
+
+=head1 SYNOPSYS
+
+
+
+=head1 COPYRIGHT AND LICENSE
+
+Copyright 2024 by Tamil, s.a.r.l.
+
+L<https://www.tamil.fr>
+
+This library is free software; you can redistribute it and/or modify it under
+the same terms as Perl 5 itself.
+
+=cut
+
