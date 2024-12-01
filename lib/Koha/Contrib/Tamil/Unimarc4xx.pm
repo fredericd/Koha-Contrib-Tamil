@@ -23,6 +23,8 @@ has where => ( is => 'rw', isa => 'Str', default => 'issn' );
 
 has mere_sans_issbn => ( is => 'rw', isa => 'HashRef', default => sub { {} } );
 
+has title => ( is => 'rw', isa => 'HashRef', default => sub { { } } );
+
 
 =attr verbose
 
@@ -60,7 +62,9 @@ has fh => (
         my $tag = $self->tag;
         my $fh_per_type = {};
         for my $type ( ('fille-sans-mere', "mere-sans-$where", "fille") ) {
-            for my $what (qw/ notice biblionumber / ) {
+            my @whats = qw/ notice biblionumber /;
+            push @whats, 'title' if $type eq 'fille-sans-mere';
+            for my $what (@whats) {
                 my $file = "$where-$tag-$type-$what.txt";
                 open my $fh, ">encoding(utf8)", $file;
                 $fh_per_type->{$type}->{$what} = $fh;
@@ -117,12 +121,16 @@ override 'process' => sub {
         my $rec = shift;
         my @lines = $rec->field('01.|090|100|101|21.|4..|7..|8..');
         @lines = map {
-            $_->tag . '    ' .
+            $_->tag . ' ' .
             join(' ', map { '$' . $_->[0] . ' ' . $_->[1] } @{$_->subf});
         } @lines;
         return join("\n", @lines);
     };
-    for my $field ($newrec->field($self->tag)) {
+    my @fixed; # Fixed fields
+    my $title;
+    for my $field ($newrec->field('01.|090|100|101|21.|4..|7..|8..')) {
+        push @fixed, $field->tag . " " . join(' ', map { '$' . $_->[0] . ' ' . $_->[1] } @{$field->subf});
+        next if $field->tag ne $self->tag;
         if ($field->subfield($letter_issbn)) {
             # On a un ISSN/ISBN => on ne fait rien
             next;
@@ -130,6 +138,7 @@ override 'process' => sub {
         my $id_mere = $field->subfield('9');
         unless ($id_mere) {
             $fille_sans_mere = 1;
+            $title = $field->subfield('t');
             next;
         }
         my $mere_biblio = Koha::Biblios->find($id_mere);
@@ -139,7 +148,7 @@ override 'process' => sub {
             # Lien invalide
             my $fh = $self->fh->{'fille-9-invalide'};
             say $fh "# $biblionumber\n", $field->tag, " ",
-                    join(' ', map { '$' . $_->[0] . ' ' . $_->[1] } @{$field->subf});
+                    join(' ', map { '$' . $_->[0] . ' ' . $_->[1] } @{$field->subf}), "\n";
             next;
         }
         my $issbn = $mere_record->field($self->where eq 'issn' ? '011' : '010');
@@ -148,6 +157,7 @@ override 'process' => sub {
             # ISSN/ISBN trouvé
             my @subf = @{$field->subf};
             push @{$field->subf}, [ $letter_issbn => $issbn ];
+            push @fixed, ">>> " . join(' ', map { '$' . $_->[0] . ' ' . $_->[1] } @{$field->subf});
             $fille_fixed = 1;
         }
         else {
@@ -160,7 +170,9 @@ override 'process' => sub {
         my $fh = $fh_fille->{biblionumber};
         say $fh $biblionumber;
         $fh = $fh_fille->{notice};
-        print $fh $dump->($record), "\n", '-' x 80, "\n", $dump->($newrec), "\n\n";
+        say $fh join("\n", @fixed), "\n";
+        # Mise à jour de la notice biblio
+
     }
     if ($fille_sans_mere) {
         my $fh_sans = $self->fh->{'fille-sans-mere'};
@@ -168,6 +180,10 @@ override 'process' => sub {
         say $fh $biblionumber;
         $fh = $fh_sans->{notice};
         say $fh $dump->($record), "\n";
+        if ($title) {
+            $self->title->{$title} ||= [];
+            push @{$self->title->{$title}}, $biblionumber;
+        }
     }
 
     return super();
@@ -198,9 +214,17 @@ override 'end_message' => sub {
     my @bibs = keys %{$self->mere_sans_issbn};
     my $fh = $self->fh->{"mere-sans-$where"}->{biblionumber};
     my $fh_notice = $self->fh->{"mere-sans-$where"}->{notice};
-    for my $biblionumber ( sort { $a <=> $b } @bibs) {
+    my $s = sub {
+        my $a = shift;
+        return $a =~ /^[0-9]*$/ ? sprintf("%08s", $a) : $a;
+    };
+    for my $biblionumber ( sort { $s->($a) cmp $s->($b) } @bibs) {
         say $fh $biblionumber;
         say $fh_notice $self->mere_sans_issbn->{$biblionumber}->as('Text');
+    }
+    $fh = $self->fh->{'fille-sans-mere'}->{title};
+    for my $title (sort { @{$self->{title}->{$b}} <=> @{$self->{title}->{$a}} } keys %{$self->title}) {
+        say $fh "$title\t", join(',', @{$self->title->{$title}});
     }
 };
 
