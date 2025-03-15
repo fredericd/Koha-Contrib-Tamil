@@ -6,7 +6,7 @@
 use Modern::Perl;
 use Pod::Usage;
 use Getopt::Long;
-use Koha::Contrib::Tamil::Unimarc4xx;
+use Koha::Contrib::Tamil::Unimarc4xx::Fix;
 
 
 my ($help)  = (0);
@@ -23,19 +23,23 @@ sub usage {
 
 usage() if $help;          
 
-my $dumper = Koha::Contrib::Tamil::Unimarc4xx->new(
-    action => \@ARGV
-);
-$dumper->run();
+
+my $action = shift @ARGV || '';
+if ($action eq 'fix') {
+    Koha::Contrib::Tamil::Unimarc4xx::Fix->new()->run(@ARGV);
+}
+else {
+    usage();
+}
 
 
 =head1 NAME
 
-koha-unimarc-4xx-fix - Fix inconsitencies between mother/child biblio records.
+koha-unimarc-4xx - Fix inconsitencies between mother/child biblio records.
 
 =head1 SYNOPSYS
 
-
+koha-unimarc-4xx fix 461 463 410
 
 =head1 COPYRIGHT AND LICENSE
 

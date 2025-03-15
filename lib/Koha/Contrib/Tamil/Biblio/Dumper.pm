@@ -12,7 +12,8 @@ use MARC::Moose::Record;
 use MARC::Moose::Writer;
 use MARC::Moose::Formater::Iso2709;
 use C4::Biblio;
-use C4::Items qw/ Item2Marc /;
+use C4::Items qw/ Item2Marc PrepareItemrecordDisplay /;
+use Koha::Items;
 use Locale::TextDomain 'Koha-Contrib-Tamil';
 
 
@@ -71,6 +72,13 @@ has koha => (
     required => 0,
 );
 
+=attr decode
+
+Decode encoded values
+
+=cut
+has decode => ( is => 'rw', isa => 'Bool', default => 0 );
+
 =attr verbose
 
 Verbosity. By default 0 (false).
@@ -84,7 +92,7 @@ has sth_item => ( is => 'rw' );
 
 has writer => ( is => 'rw', isa => 'MARC::Moose::Writer' );
 
-
+has code_to_value => ( is => 'rw', isa => 'HashRef' );
 
 before 'run' => sub {
     my $self = shift;
@@ -116,6 +124,35 @@ before 'run' => sub {
     $query .= " AND $where" if $where;
     #say $query;
     $self->sth_item( $self->koha->dbh->prepare($query));
+
+    # Récupération des décodages
+    if ($self->decode) {
+        my $av;
+        my $decode;
+        $query = "SELECT category, authorised_value, lib FROM authorised_values";
+        for (@{$self->koha->dbh->selectall_arrayref($query)}) {
+            my ($category, $code, $decode) = @$_;
+            $av->{$category}->{$code} = $decode;
+        }
+        $query = "SELECT branchcode, branchname FROM branches";
+        for (@{$self->koha->dbh->selectall_arrayref($query)}) {
+            my ($code, $decode) = @$_;
+            $av->{branches}->{$code} = $decode;
+        }
+        $query = "SELECT itemtype, description FROM itemtypes";
+        for (@{$self->koha->dbh->selectall_arrayref($query)}) {
+            my ($code, $decode) = @$_;
+            $av->{itemtypes}->{$code} = $decode;
+        }
+        $query = "SELECT tagfield, tagsubfield, authorised_value
+                 FROM marc_subfield_structure
+                 WHERE frameworkcode='' AND authorised_value<>''";
+        for (@{$self->koha->dbh->selectall_arrayref($query)}) {
+            my ($tag, $letter, $category) = @$_;
+            $decode->{$tag}->{$letter} = $av->{$category};
+        }
+        $self->code_to_value($decode);
+    }
 
     my $fh = new IO::File '> ' . $self->file;
     binmode($fh, ':encoding(utf8)');
@@ -152,6 +189,23 @@ override 'process' => sub {
             tag => $field->tag,
             subf => [ $field->subfields ]);
         $record->append($f);
+    }
+
+    if ($self->decode) {
+        my $decode = $self->code_to_value;
+        for my $field (@{$record->fields}) {
+            my $dec_tag = $decode->{$field->tag};
+            next unless $dec_tag;
+            for (@{$field->subf}) {
+                my ($letter, $value) = @$_;
+                my $dec_letter = $dec_tag->{$letter};
+                next unless $dec_letter;
+                my $decode = $dec_letter->{$value};
+                next unless defined $decode;
+                $_->[1] = $decode;
+
+            }
+        }
     }
 
     # Specific conversion
